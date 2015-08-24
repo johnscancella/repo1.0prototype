@@ -46,7 +46,7 @@ subprojects {
   
 //https://issues.jenkins-ci.org/browse/JENKINS-9438
 //cause the junit test output isn't updated the build fails, this updates the timestamp
-  task jenkinsTest{
+/*  task jenkinsTest{
     inputs.files test.outputs.files
     doLast{
         def timestamp = System.currentTimeMillis()
@@ -54,5 +54,5 @@ subprojects {
     }
   }
  
-  build.dependsOn(jenkinsTest)
+  build.dependsOn(jenkinsTest)*/
 }
