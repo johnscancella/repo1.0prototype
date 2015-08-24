@@ -44,15 +44,22 @@ public class FileStoreControllerTest extends Assert {
   public void testNonZeroLengthFile() throws Exception{
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
-    FileInputStream fis = new FileInputStream(testFile);
     String mockHash = "123ABC";
     Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
-    
-    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
-      .file(multipartFile))
-      .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(mockHash, result.getResponse().getContentAsString());
+    FileInputStream fis = null;
+    try{
+      fis = new FileInputStream(testFile);
+      
+      MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+      MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+        .file(multipartFile))
+        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+      assertEquals(mockHash, result.getResponse().getContentAsString());
+    } finally{
+      if(fis != null){
+        fis.close();
+      }
+    }
   }
   
   @Test

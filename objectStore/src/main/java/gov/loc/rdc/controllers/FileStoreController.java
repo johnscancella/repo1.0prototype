@@ -112,12 +112,12 @@ public class FileStoreController {
   }
   
   @ResponseStatus(value = HttpStatus.NOT_FOUND)
-  public class ResourceNotFoundException extends RuntimeException {
+  public static class ResourceNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
   }
   
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  public class UnsupportedAlgorithm extends RuntimeException {
+  public static class UnsupportedAlgorithm extends RuntimeException {
     private static final long serialVersionUID = 1L;
     public UnsupportedAlgorithm(String message){
       super(message);
