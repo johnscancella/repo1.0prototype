@@ -6,20 +6,7 @@ buildscript {
       classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
   }
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
 apply plugin: 'spring-boot'
-
-repositories {
-    jcenter()
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12',
@@ -31,38 +18,7 @@ dependencies {
     'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'
 }
 
+//when not building an offical release (i.e. versioned) add debug info for easy debugging
 if(project.version == "unspecified"){
   applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
 }
-
-test { //show test output
-  testLogging.showStandardStreams = true
-}
-
-jacocoTestReport {
-  reports {
-      xml.enabled false
-      csv.enabled true
-  }
-}
-
-jacocoTestReport.dependsOn test
-build.dependsOn jacocoTestReport
-
-  findbugsMain{
-    reports{
-      xml.enabled = false
-      html.enabled = true
-    }
-  }
-
-  findbugsTest{
-    reports{
-      xml.enabled = false
-      html.enabled = true
-    }
-  }
-
-  pmd {
-    ruleSets = ["java-basic", "java-braces"]
-  }

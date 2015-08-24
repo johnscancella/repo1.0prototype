@@ -9,6 +9,9 @@ subprojects {
   apply plugin: 'findbugs'
   apply plugin: 'pmd'
 
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
   test { //show test output
     testLogging.showStandardStreams = true
   }
@@ -21,6 +24,7 @@ subprojects {
   }
 
   jacocoTestReport.dependsOn test
+  build.dependsOn jacocoTestReport
 
   findbugsMain{
     reports{

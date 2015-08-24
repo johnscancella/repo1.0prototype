@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+/**
+ * Instead of supplying one or more spring configurations in xml define them in java classes
+ */
 @Configuration
 public class AppConfig {
   private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
