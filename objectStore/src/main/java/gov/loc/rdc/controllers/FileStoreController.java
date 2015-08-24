@@ -69,6 +69,7 @@ public class FileStoreController {
         hash = store(file.getInputStream(), objectStoreRootDir, hasher);
       }catch(Exception e){
         logger.error("Failed to store file into object store.", e);
+        throw new InternalError();
       }
     }else{
       logger.warn("Received empty file to store.");
@@ -91,6 +92,7 @@ public class FileStoreController {
     }
     catch (Exception e) {
       logger.error("Unable to store file with hash [{}].", hash, e);
+      throw new InternalError();
     }
     
     return hash;
@@ -109,6 +111,11 @@ public class FileStoreController {
     logger.debug("Computed the new file location to be [{}].", computedLocation.toURI());
 
     return computedLocation;
+  }
+  
+  @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+  public static class InternalError extends RuntimeException {
+    private static final long serialVersionUID = 1L;
   }
   
   @ResponseStatus(value = HttpStatus.NOT_FOUND)

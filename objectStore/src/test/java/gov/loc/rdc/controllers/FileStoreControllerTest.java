@@ -50,8 +50,8 @@ public class FileStoreControllerTest extends Assert {
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("emptyTestFile.txt").getFile());
     FileInputStream fis = new FileInputStream(testFile);
-    
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
@@ -71,6 +71,44 @@ public class FileStoreControllerTest extends Assert {
   }
   
   @Test
+  public void testSavingSameFileTwice() throws Exception{
+    storeData();
+    storeData();
+  }
+  
+  @Test
+  public void testThrowingErrorWithFilesystem() throws Exception {
+    FileStoreController fileStoreController = new FileStoreController();
+    fileStoreController.setHasher(mockHasher);
+    fileStoreController.setObjectStoreRootDir(new File("/foo"));
+    mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
+    
+    ClassLoader classLoader = getClass().getClassLoader();
+    File testFile = new File(classLoader.getResource("testFile.txt").getFile());
+    String mockHash = "123ABC";
+    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
+    FileInputStream fis = new FileInputStream(testFile);
+    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    
+    mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+      .file(multipartFile))
+      .andExpect(MockMvcResultMatchers.status().isInternalServerError()).andReturn();
+  }
+  
+  @Test
+  public void testThrowingErrorWhenHashing() throws Exception{
+    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenThrow(new RuntimeException());
+    ClassLoader classLoader = getClass().getClassLoader();
+    File testFile = new File(classLoader.getResource("testFile.txt").getFile());
+    FileInputStream fis = new FileInputStream(testFile);
+    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    
+    mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+      .file(multipartFile))
+      .andExpect(MockMvcResultMatchers.status().isInternalServerError()).andReturn();
+  }
+  
+  @Test
   public void testGettingExistingFile() throws Exception{
     storeData();
     mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
@@ -82,19 +120,12 @@ public class FileStoreControllerTest extends Assert {
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
     String mockHash = "123ABC";
     Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
-    FileInputStream fis = null;
-    try{
-      fis = new FileInputStream(testFile);
-      
-      MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
-      MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
-        .file(multipartFile))
-        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-      assertEquals(mockHash, result.getResponse().getContentAsString());
-    } finally{
-      if(fis != null){
-        fis.close();
-      }
-    }
+    FileInputStream fis = new FileInputStream(testFile);
+    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+      .file(multipartFile))
+      .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals(mockHash, result.getResponse().getContentAsString());
   }
 }

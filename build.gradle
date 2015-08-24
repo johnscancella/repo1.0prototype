@@ -33,12 +33,7 @@ subprojects {
     }
   }
 
-  findbugsTest{
-    reports{
-      xml.enabled = false
-      html.enabled = true
-    }
-  }
+  findbugsTest.enabled = false //not enabled because sometimes you need to do bad practices in tests
 
   pmd {
     ruleSets = ["java-basic", "java-braces"]
