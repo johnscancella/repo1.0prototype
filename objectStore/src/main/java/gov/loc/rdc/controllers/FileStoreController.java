@@ -28,7 +28,7 @@ public class FileStoreController {
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
   
-  @RequestMapping(value="/store", method=RequestMethod.POST)
+  @RequestMapping(value="/store", method={RequestMethod.POST, RequestMethod.PUT})
   public String storeFile(@RequestParam(value="file") MultipartFile file){
     String hash = NO_HASH;
     
