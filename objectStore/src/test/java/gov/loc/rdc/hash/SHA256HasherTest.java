@@ -1,6 +1,7 @@
 package gov.loc.rdc.hash;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,8 +20,9 @@ public class SHA256HasherTest extends Assert {
   public void testHash() throws Exception{
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
+    FileInputStream fis = new FileInputStream(testFile);
     
-    String hash = sut.hash(testFile);
+    String hash = sut.hash(fis);
     assertNotNull(hash);
     assertEquals("cfc3692881169aca9c487aabcc24d973617a5ba1f9483496ade6281994809d73", hash);
   }

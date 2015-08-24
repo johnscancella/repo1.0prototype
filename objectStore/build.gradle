@@ -8,14 +8,10 @@ buildscript {
 }
 apply plugin: 'spring-boot'
 
-springBoot {
-  mainCLass = "gov.loc.rdc.app.ObjectStoreApplication"
-}
-
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12',
     'org.springframework.boot:spring-boot-starter-web:1.2.5.RELEASE',
-    'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE'
+    'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
     'org.codehaus.groovy:groovy-all:2.4.0',
     'commons-io:commons-io:2.4'
 

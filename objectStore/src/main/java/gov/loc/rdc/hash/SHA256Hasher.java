@@ -1,8 +1,6 @@
 package gov.loc.rdc.hash;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -17,16 +15,16 @@ public class SHA256Hasher implements Hasher {
   private static final Logger logger = LoggerFactory.getLogger(SHA256Hasher.class);
 
   @Override
-  public String hash(File file) throws Exception {
+  public String hash(InputStream inputStream) throws Exception {
     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-    String hash = hash(file, messageDigest);
-    logger.debug("Computed SHA256 hash to be {} for file {}", hash, file.toURI());
+    String hash = hash(inputStream, messageDigest);
+    logger.debug("Computed SHA256 hash to be {}", hash);
     
     return hash;
   }
 
-  protected String hash(final File file, final MessageDigest messageDigest) throws IOException {
-    try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+  protected String hash(final InputStream inputStream, final MessageDigest messageDigest) throws IOException {
+    try (InputStream is = new BufferedInputStream(inputStream)) {
       final byte[] buffer = new byte[1024];
       for (int read = 0; (read = is.read(buffer)) != -1;) {
         messageDigest.update(buffer, 0, read);
