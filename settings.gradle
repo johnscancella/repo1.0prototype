@@ -1,0 +1,3 @@
+rootProject.name = 'repo1.0'
+
+include 'object-store'

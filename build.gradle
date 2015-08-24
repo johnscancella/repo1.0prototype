@@ -1,53 +1,26 @@
-buildscript {
+subprojects {
   repositories {
     jcenter()
   }
-  dependencies {
-      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+
+  apply plugin: 'java'
+  apply plugin: 'eclipse'
+  apply plugin: 'jacoco'
+  apply plugin: 'findbugs'
+  apply plugin: 'pmd'
+
+  test { //show test output
+    testLogging.showStandardStreams = true
   }
-}
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
-apply plugin: 'spring-boot'
-
-repositories {
-    jcenter()
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.12',
-    'org.springframework.boot:spring-boot-starter:1.2.5.RELEASE',
-    'org.codehaus.groovy:groovy-all:2.4.0',
-    'commons-io:commons-io:2.4'
-
-    testCompile 'junit:junit:4.12',
-    'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'
-}
-
-if(project.version == "unspecified"){
-  applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
-}
-
-test { //show test output
-  testLogging.showStandardStreams = true
-}
-
-jacocoTestReport {
-  reports {
-      xml.enabled false
-      csv.enabled true
+  jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled true
+    }
   }
-}
 
-jacocoTestReport.dependsOn test
-build.dependsOn jacocoTestReport
+  jacocoTestReport.dependsOn test
 
   findbugsMain{
     reports{
@@ -66,3 +39,16 @@ build.dependsOn jacocoTestReport
   pmd {
     ruleSets = ["java-basic", "java-braces"]
   }
+  
+//https://issues.jenkins-ci.org/browse/JENKINS-9438
+//cause the junit test output isn't updated the build fails, this updates the timestamp
+  task jenkinsTest{
+    inputs.files test.outputs.files
+    doLast{
+        def timestamp = System.currentTimeMillis()
+        test.testResultsDir.eachFile { it.lastModified = timestamp }
+    }
+  }
+ 
+  build.dependsOn(jenkinsTest)
+}
