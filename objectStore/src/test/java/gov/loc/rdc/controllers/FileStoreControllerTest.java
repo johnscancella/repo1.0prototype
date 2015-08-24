@@ -41,7 +41,43 @@ public class FileStoreControllerTest extends Assert {
   }
   
   @Test
-  public void testNonZeroLengthFile() throws Exception{
+  public void testStoringNonZeroLengthFile() throws Exception{
+    storeData();
+  }
+  
+  @Test
+  public void testStoringZeroLengthFile() throws Exception{
+    ClassLoader classLoader = getClass().getClassLoader();
+    File testFile = new File(classLoader.getResource("emptyTestFile.txt").getFile());
+    FileInputStream fis = new FileInputStream(testFile);
+    
+    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+      .file(multipartFile))
+      .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals("Hash was not computed.", result.getResponse().getContentAsString());
+  }
+  
+  @Test
+  public void testGettingNonexistingFile() throws Exception{
+    mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound());
+  }
+  
+  @Test
+  public void testBadAlgorithm() throws Exception{
+    mockMvc.perform(MockMvcRequestBuilders.get("/get/foo/123ABC"))
+    .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+  
+  @Test
+  public void testGettingExistingFile() throws Exception{
+    storeData();
+    mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+  
+  private void storeData() throws Exception{
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
     String mockHash = "123ABC";
@@ -60,18 +96,5 @@ public class FileStoreControllerTest extends Assert {
         fis.close();
       }
     }
-  }
-  
-  @Test
-  public void testZeroLengthFile() throws Exception{
-    ClassLoader classLoader = getClass().getClassLoader();
-    File testFile = new File(classLoader.getResource("emptyTestFile.txt").getFile());
-    FileInputStream fis = new FileInputStream(testFile);
-    
-    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
-      .file(multipartFile))
-      .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("Hash was not computed.", result.getResponse().getContentAsString());
   }
 }
