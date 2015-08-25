@@ -1,17 +1,16 @@
 package gov.loc.rdc.tasks;
 
+import gov.loc.rdc.errors.InternalError;
 import gov.loc.rdc.hash.HashUtils;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
-import gov.loc.rdc.errors.InternalError;
 
 /**
  * responsible for storing a file in the object store and returning the file hash
@@ -36,7 +35,7 @@ public class StoreFileTask implements Runnable, HashUtils{
   public void run() {
     if(!file.isEmpty()){
       try{
-        String hash = store(file.getInputStream(), objectStoreRootDir, hasher);
+        String hash = store(file, objectStoreRootDir, hasher);
         result.setResult(hash);
       }catch(Exception e){
         logger.error("Failed to store file into object store.", e);
@@ -48,13 +47,18 @@ public class StoreFileTask implements Runnable, HashUtils{
     }
   }
   
-  protected String store(InputStream inputStream, File dirToStore, Hasher hasherImpl) throws Exception{
-    String hash = hasherImpl.hash(inputStream);
+  protected String store(MultipartFile multipartFile, File dirToStore, Hasher hasherImpl) throws Exception{
+    String hash = hasherImpl.hash(multipartFile.getInputStream());
     File storedFile = computeStoredLocation(dirToStore, hash);
     
     if(!storedFile.exists()){
+      logger.debug("creating path [{}] if it does not already exist.", storedFile.getParent());
       Files.createDirectories(storedFile.getParentFile().toPath());
-      Files.copy(inputStream, storedFile.toPath());
+      logger.info("copying stream to {}", storedFile.toURI());
+      Files.copy(file.getInputStream(), storedFile.toPath());
+    }
+    else{
+      logger.info("Already stored file with hash {}, skipping.", hash);
     }
     
     return hash;
