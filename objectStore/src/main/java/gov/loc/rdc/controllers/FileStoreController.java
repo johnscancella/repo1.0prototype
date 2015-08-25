@@ -14,11 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,8 +44,8 @@ public class FileStoreController {
     logger.info("Storing hashed files in [{}] directory", objectStoreRootDir.toURI());
   }
   
-  @RequestMapping(value="/get/{algorithm}/{hash}", method=RequestMethod.GET)
-  public File getFile(@PathVariable String algorithm, @PathVariable String hash){
+  @RequestMapping(value="/get/{algorithm}/{hash}", method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  public @ResponseBody FileSystemResource getFile(@PathVariable String algorithm, @PathVariable String hash){
     if(!ACCEPTED_HASH_ALGORITHMS.contains(algorithm)){
       logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
       throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
@@ -53,7 +56,7 @@ public class FileStoreController {
     
     if(storedFile.exists()){
       logger.debug("Found stored file that matches hash [{}].", hash);
-      return storedFile;
+      return new FileSystemResource(storedFile);
     }
     
     logger.warn("Unable to find stored file [{}]. Returning 404 instead.", storedFile.toURI());

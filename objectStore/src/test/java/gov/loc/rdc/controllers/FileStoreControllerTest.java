@@ -111,8 +111,10 @@ public class FileStoreControllerTest extends Assert {
   @Test
   public void testGettingExistingFile() throws Exception{
     storeData();
-    mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
+        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals("this is a test file that will be used during testing and contains text.", 
+        result.getResponse().getContentAsString());
   }
   
   private void storeData() throws Exception{

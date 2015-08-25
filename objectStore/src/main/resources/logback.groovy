@@ -16,3 +16,4 @@ root(INFO, ["STDOUT"])
 //these two are set to ERROR since they output unneeded logging at the info level
 logger("gov.loc.rdc.app.Main", ERROR)
 logger("org.springframework", ERROR)
+logger("org.hibernate", WARN) //otherwise prints out validator version
