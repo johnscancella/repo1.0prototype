@@ -1,6 +1,7 @@
 package gov.loc.rdc.app;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @ComponentScan("gov.loc.rdc")
+@EnableAutoConfiguration
 @EnableConfigurationProperties
 public class ObjectStoreApplication {
 

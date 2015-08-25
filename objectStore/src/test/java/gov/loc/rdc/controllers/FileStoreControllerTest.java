@@ -1,6 +1,6 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.controllers.FileStoreController;
+import gov.loc.rdc.errors.InternalError;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,13 +31,14 @@ public class FileStoreControllerTest extends Assert {
   
   @Mock
   private Hasher mockHasher;
-
+  
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
     FileStoreController fileStoreController = new FileStoreController();
     fileStoreController.setHasher(mockHasher);
     fileStoreController.setObjectStoreRootDir(folder.newFolder());
+    fileStoreController.setThreadExecutor(new MockThreadpool());
     this.mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
   }
   
@@ -55,7 +57,7 @@ public class FileStoreControllerTest extends Assert {
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("Hash was not computed.", result.getResponse().getContentAsString());
+    assertEquals("Hash was not computed.", result.getAsyncResult());
   }
   
   @Test
@@ -81,6 +83,7 @@ public class FileStoreControllerTest extends Assert {
     FileStoreController fileStoreController = new FileStoreController();
     fileStoreController.setHasher(mockHasher);
     fileStoreController.setObjectStoreRootDir(new File("/foo"));
+    fileStoreController.setThreadExecutor(new MockThreadpool());
     mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
     
     ClassLoader classLoader = getClass().getClassLoader();
@@ -90,22 +93,10 @@ public class FileStoreControllerTest extends Assert {
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
     
-    mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
       .file(multipartFile))
-      .andExpect(MockMvcResultMatchers.status().isInternalServerError()).andReturn();
-  }
-  
-  @Test
-  public void testThrowingErrorWhenHashing() throws Exception{
-    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenThrow(new RuntimeException());
-    ClassLoader classLoader = getClass().getClassLoader();
-    File testFile = new File(classLoader.getResource("testFile.txt").getFile());
-    FileInputStream fis = new FileInputStream(testFile);
-    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
-    
-    mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
-      .file(multipartFile))
-      .andExpect(MockMvcResultMatchers.status().isInternalServerError()).andReturn();
+          .andReturn();
+    assertEquals(InternalError.class, result.getAsyncResult().getClass());
   }
   
   @Test
@@ -115,6 +106,21 @@ public class FileStoreControllerTest extends Assert {
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals("this is a test file that will be used during testing and contains text.", 
         result.getResponse().getContentAsString());
+  }
+  
+  @Test
+  public void testStoringAsync() throws Exception{
+    ClassLoader classLoader = getClass().getClassLoader();
+    File testFile = new File(classLoader.getResource("testFile.txt").getFile());
+    String mockHash = "123ABC";
+    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
+    FileInputStream fis = new FileInputStream(testFile);
+    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+    
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+      .file(multipartFile))
+      .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals(mockHash, result.getAsyncResult());
   }
   
   private void storeData() throws Exception{
@@ -128,6 +134,15 @@ public class FileStoreControllerTest extends Assert {
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(mockHash, result.getResponse().getContentAsString());
+    assertEquals(mockHash, result.getAsyncResult());
+  }
+  
+  private static class MockThreadpool extends ThreadPoolTaskExecutor {
+    private static final long serialVersionUID = 1L;
+    
+    @Override
+    public void execute(Runnable task){
+      task.run();
+    }
   }
 }
