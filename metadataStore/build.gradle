@@ -1,0 +1,26 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+  }
+}
+apply plugin: 'spring-boot'
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.12',
+    'org.springframework.boot:spring-boot-starter-web:1.2.5.RELEASE',
+    'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
+    'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
+    'org.springframework.boot:spring-boot-starter-data-mongodb:1.2.5.RELEASE',
+    'org.codehaus.groovy:groovy-all:2.4.0'
+
+    testCompile 'junit:junit:4.12',
+    'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'
+}
+
+//when not building an offical release (i.e. versioned) add debug info for easy debugging
+if(project.version == "unspecified"){
+  applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
+}
