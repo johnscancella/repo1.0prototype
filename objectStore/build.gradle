@@ -12,8 +12,8 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12',
     'org.springframework.boot:spring-boot-starter-web:1.2.5.RELEASE',
     'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
-    'org.codehaus.groovy:groovy-all:2.4.0',
-    'commons-io:commons-io:2.4'
+    'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
+    'org.codehaus.groovy:groovy-all:2.4.0'
 
     testCompile 'junit:junit:4.12',
     'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'

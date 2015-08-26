@@ -37,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileStoreController implements HashUtils{
   private static final Logger logger = LoggerFactory.getLogger(FileStoreController.class);
   private static final List<String> ACCEPTED_HASH_ALGORITHMS = Arrays.asList("sha256", "sha-256");
+  private static final String GET_FILE_URL = "/getfile/{algorithm}/{hash}";
+  private static final String STORE_FILE_URL = "/storefile";
   
   @Autowired
   private Hasher hasher;
@@ -52,7 +54,8 @@ public class FileStoreController implements HashUtils{
     logger.info("Storing hashed files in [{}] directory", objectStoreRootDir.toURI());
   }
   
-  @RequestMapping(value="/get/{algorithm}/{hash}", method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  //TODO change to async?
+  @RequestMapping(value=GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public @ResponseBody FileSystemResource getFile(@PathVariable String algorithm, @PathVariable String hash){
     if(!ACCEPTED_HASH_ALGORITHMS.contains(algorithm)){
       logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
@@ -71,7 +74,7 @@ public class FileStoreController implements HashUtils{
     throw new ResourceNotFoundException();
   }
   
-  @RequestMapping(value="/store", method={RequestMethod.POST, RequestMethod.PUT})
+  @RequestMapping(value=STORE_FILE_URL, method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file){
     DeferredResult<String> result = new DeferredResult<String>();
     

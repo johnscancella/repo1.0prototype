@@ -54,7 +54,7 @@ public class FileStoreControllerTest extends Assert {
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
     
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals("Hash was not computed.", result.getAsyncResult());
@@ -62,13 +62,13 @@ public class FileStoreControllerTest extends Assert {
   
   @Test
   public void testGettingNonexistingFile() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC"))
         .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
   
   @Test
   public void testBadAlgorithm() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/get/foo/123ABC"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo/123ABC"))
     .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
   
@@ -93,7 +93,7 @@ public class FileStoreControllerTest extends Assert {
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
     
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile")
       .file(multipartFile))
           .andReturn();
     assertEquals(InternalError.class, result.getAsyncResult().getClass());
@@ -102,7 +102,7 @@ public class FileStoreControllerTest extends Assert {
   @Test
   public void testGettingExistingFile() throws Exception{
     storeData();
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/get/sha256/123ABC"))
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals("this is a test file that will be used during testing and contains text.", 
         result.getResponse().getContentAsString());
@@ -117,7 +117,7 @@ public class FileStoreControllerTest extends Assert {
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
     
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals(mockHash, result.getAsyncResult());
@@ -131,7 +131,7 @@ public class FileStoreControllerTest extends Assert {
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
     
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/store")
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile")
       .file(multipartFile))
       .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals(mockHash, result.getAsyncResult());
