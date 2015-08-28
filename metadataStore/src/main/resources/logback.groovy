@@ -16,3 +16,4 @@ root(INFO, ["STDOUT"])
 logger("gov.loc.rdc.app.Main", ERROR)
 logger("org.springframework", ERROR)
 logger("org.hibernate", WARN) //otherwise prints out validator version
+logger("com.github.fakemongo", WARN)

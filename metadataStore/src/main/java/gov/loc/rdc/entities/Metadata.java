@@ -1,5 +1,7 @@
 package gov.loc.rdc.entities;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +17,11 @@ public class Metadata {
   private Set<String> tags;
   private List<KeyValuePair<String, String>> keyValuePairs;
   
-  public Metadata() {}
+  public Metadata() {
+    this.hash = "NO HASH";
+    this.tags = new HashSet<>();
+    this.keyValuePairs = new ArrayList<>();
+  }
   public Metadata(String hash, Set<String> tags, List<KeyValuePair<String, String>> keyValuePairs){
     this.hash = hash;
     this.tags = tags;

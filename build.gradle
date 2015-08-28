@@ -50,4 +50,9 @@ subprojects {
   }
  
   build.dependsOn(jenkinsTest)*/
+
+  task dump(type: Copy){
+    from configurations.runtime
+    into "dumpedDependencies"
+  }
 }
