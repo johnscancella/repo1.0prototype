@@ -2,30 +2,33 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.JsonParamParseFail;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
-import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
-import gov.loc.rdc.utils.KeyValueJsonConverter;
+import gov.loc.rdc.tasks.AddKeyValuePairTask;
+import gov.loc.rdc.tasks.AddTagTask;
+import gov.loc.rdc.tasks.DeleteKeyValuePairTask;
+import gov.loc.rdc.tasks.DeleteMetadataTask;
+import gov.loc.rdc.tasks.FindByHashTask;
+import gov.loc.rdc.tasks.FindByKeyValuePairTask;
+import gov.loc.rdc.tasks.FindByKeyValuePairsTask;
+import gov.loc.rdc.tasks.FindByTagsTask;
+import gov.loc.rdc.tasks.StoreMetadataTask;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 public class MetadataStoreController {
-  private static final Logger logger = LoggerFactory.getLogger(MetadataStoreController.class);
   private static final String BASE_DELETE_URL = "/deletemeta/{algorithm}/{hash}";
   private static final String FIND_BY_BASE_URL = "/searchmeta";
   private static final String FIND_BY_HASH_URL = FIND_BY_BASE_URL + "/{algorithm}/{hash}";
@@ -42,154 +45,132 @@ public class MetadataStoreController {
   @Autowired
   private MetadataRepository repository;
   
+  @Resource(name="threadPoolTaskExecutor")
+  private ThreadPoolTaskExecutor threadExecutor;
+  
   @RequestMapping(value=FIND_BY_HASH_URL, method=RequestMethod.GET)
-  public @ResponseBody Metadata findByHash(@PathVariable String algorithm, @PathVariable String hash){
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
+  public DeferredResult<Metadata> findByHash(@PathVariable String algorithm, @PathVariable String hash){
+    DeferredResult<Metadata> result = new DeferredResult<>();
     
-    Metadata data = repository.findByHash(hash);
-    if(data == null){
-      data = new Metadata("NO HASH", new HashSet<>(), new ArrayList<>());
-    }
+    FindByHashTask task = new FindByHashTask(result, repository, algorithm, hash);
+    threadExecutor.execute(task);
     
-    return data; 
+    return result;
   }
   
   @RequestMapping(value=FIND_BY_TAG_URL, method=RequestMethod.GET)
-  public @ResponseBody List<Metadata> findBytag(@PathVariable String tag){
-    List<Metadata> datas = repository.findByTag(tag);
-    if(datas == null){
-      datas = new ArrayList<>();
-    }
+  public DeferredResult<List<Metadata>> findBytag(@PathVariable String tag){
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
-    return datas; 
+    FindByTagsTask task = new FindByTagsTask(result, repository, tag);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @RequestMapping(value=FIND_BY_TAGS_URL, method=RequestMethod.GET)
-  public @ResponseBody List<Metadata> findBytags(@RequestParam List<String> tags){
-    List<Metadata> datas = repository.findByTags(tags);
-    if(datas == null){
-      datas = new ArrayList<>();
-    }
+  public DeferredResult<List<Metadata>> findBytags(@RequestParam List<String> tags){
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
-    return datas; 
+    String[] tagsAsArray = tags.toArray(new String[tags.size()]);
+    FindByTagsTask task = new FindByTagsTask(result, repository, tagsAsArray);
+    threadExecutor.execute(task);
+    
+    return result; 
   }
   
   @RequestMapping(value=FIND_BY_KEY_VALUE_PAIR_URL, method=RequestMethod.GET)
-  public @ResponseBody List<Metadata> findByKeyValuePair(@PathVariable String key, @PathVariable String value){
-    List<Metadata> datas = repository.findByKeyValuePair(new KeyValuePair<String, String>(key, value));
-    if(datas == null){
-      datas = new ArrayList<>();
-    }
+  public DeferredResult<List<Metadata>> findByKeyValuePair(@PathVariable String key, @PathVariable String value){
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
-    return datas; 
+    FindByKeyValuePairTask task = new FindByKeyValuePairTask(result, repository, new KeyValuePair<String, String>(key, value));
+    threadExecutor.execute(task);
+    
+    return result; 
   }
   
   @RequestMapping(value=FIND_BY_KEY_VALUE_PAIRS_URL, method=RequestMethod.GET)
-  public @ResponseBody List<Metadata> findByKeyValuePairs(@RequestParam String keyValuePairsAsJson){
-    List<Metadata> datas = new ArrayList<>();
-    try{
-      List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
-      datas = repository.findByKeyValuePairs(keyValuePairs);
-      if(datas == null){
-        datas = new ArrayList<>();
-      }
-    }
-    catch(Exception e){
-      logger.error("Failed to find metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
-      throw new JsonParamParseFail(e);
-    }
+  public DeferredResult<List<Metadata>> findByKeyValuePairs(@RequestParam String keyValuePairsAsJson){
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
-    return datas; 
+    FindByKeyValuePairsTask task = new FindByKeyValuePairsTask(result, repository, keyValuePairsAsJson);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @RequestMapping(value=BASE_DELETE_URL, method=RequestMethod.DELETE)
   public void deleteMetadata(@PathVariable String algorithm, @PathVariable String hash){
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
     
-    repository.deleteHash(hash);
   }
   
   @RequestMapping(value=DELETE_TAG_URL, method=RequestMethod.DELETE)
-  public void deleteTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
+  public DeferredResult<Boolean> deleteTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
+    DeferredResult<Boolean> result = new DeferredResult<>();
     
-    repository.deleteTagFromHash(tag, hash);
+    DeleteMetadataTask task = new DeleteMetadataTask(result, repository, algorithm, hash);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @RequestMapping(value=DELETE_KEY_VALUE_URL, method=RequestMethod.DELETE)
-  public void deleteKeyValue(@PathVariable String algorithm, 
+  public DeferredResult<Boolean> deleteKeyValue(@PathVariable String algorithm, 
                              @PathVariable String hash, 
                              @PathVariable String key, 
                              @PathVariable String value){
+    DeferredResult<Boolean> result = new DeferredResult<>();
     
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
+    DeleteKeyValuePairTask task = new DeleteKeyValuePairTask(result, repository, algorithm, hash, new KeyValuePair<String, String>(key, value));
+    threadExecutor.execute(task);
     
-    repository.deleteKeyValueFromHash(new KeyValuePair<String, String>(key, value), hash);
+    return result;
   }
   
   @RequestMapping(value=BASE_STORE_URL, method={RequestMethod.POST, RequestMethod.PUT})
-  public void storeMetadata(@PathVariable String algorithm, 
+  public DeferredResult<Boolean> storeMetadata(@PathVariable String algorithm, 
                             @PathVariable String hash,
                             @RequestParam Set<String> tags,
                             @RequestParam String keyValuePairsAsJson){
     
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
+    DeferredResult<Boolean> result = new DeferredResult<>();
     
-    try{
-      List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
-      Metadata data = new Metadata(hash, tags, keyValuePairs);
-      logger.debug("Saving metadata [{}]", data);
-      repository.save(data);
-    }
-    catch(Exception e){
-      logger.error("Failed to store metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
-      throw new JsonParamParseFail(e);
-    }
+    StoreMetadataTask task = new StoreMetadataTask(result, repository, algorithm, hash, tags, keyValuePairsAsJson);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @RequestMapping(value=ADD_TAG_URL, method={RequestMethod.POST, RequestMethod.PUT})
-  public void addTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
-        
-    logger.debug("Adding tag [{}] to hash [{}]", tag, hash);
-    repository.saveTagToHash(tag, hash);
+  public DeferredResult<Boolean> addTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
+    DeferredResult<Boolean> result = new DeferredResult<>();
+    
+    AddTagTask task = new AddTagTask(result, repository, algorithm, hash, tag);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @RequestMapping(value=ADD_KEY_VALUE_URL, method={RequestMethod.POST, RequestMethod.PUT})
-  public void addKeyValue(@PathVariable String algorithm, 
+  public DeferredResult<Boolean> addKeyValue(@PathVariable String algorithm, 
                           @PathVariable String hash, 
                           @PathVariable String key, 
                           @PathVariable String value){
+    DeferredResult<Boolean> result = new DeferredResult<>();
     
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
-    }
+    AddKeyValuePairTask task = new AddKeyValuePairTask(result, repository, algorithm, hash, new KeyValuePair<String, String>(key, value));
+    threadExecutor.execute(task);
     
-    logger.debug("Adding key:value [{}:{}] to hash [{}]", key, value, hash);
-    repository.saveKeyValuePairToHash(new KeyValuePair<String, String>(key, value), hash);
+    return result;
   }
 
   //used only for testing
   protected void setRepository(MetadataRepository repository) {
     this.repository = repository;
+  }
+  
+  //only used in unit test
+  protected void setThreadExecutor(ThreadPoolTaskExecutor threadExecutor) {
+    this.threadExecutor = threadExecutor;
   }
 }

@@ -10,6 +10,7 @@ import gov.loc.rdc.tasks.StoreFileTask;
 import java.io.File;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class FileStoreController implements HashPathUtils{
   @Autowired
   private Hasher hasher;
   
-  @Autowired
+  @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
   
   @Value("${rootDir:/tmp}")

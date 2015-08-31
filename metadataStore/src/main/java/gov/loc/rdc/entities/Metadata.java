@@ -3,6 +3,7 @@ package gov.loc.rdc.entities;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -26,6 +27,25 @@ public class Metadata {
     this.hash = hash;
     this.tags = tags;
     this.keyValuePairs = keyValuePairs;
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(hash, tags.hashCode(), keyValuePairs.hashCode());
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Metadata other = (Metadata) obj;
+    return Objects.equals(this.hash, other.hash) 
+        && this.tags.equals(other.tags) 
+        && this.keyValuePairs.equals(other.keyValuePairs);
   }
   
   @Override

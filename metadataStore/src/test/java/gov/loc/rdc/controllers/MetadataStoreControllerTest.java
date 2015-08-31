@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,57 +30,52 @@ public class MetadataStoreControllerTest extends Assert{
   private MetadataRepository mockRepository;
   
   private static final Metadata MOCK_METADATA = new Metadata(); 
-  private static final String METADATA_REPOSNSE_AS_STRING= "{\"hash\":\"NO HASH\",\"tags\":[],\"keyValuePairs\":[]}";
   
   @Before
   public void setup(){
     MockitoAnnotations.initMocks(this);
     MetadataStoreController controller = new MetadataStoreController();
     controller.setRepository(mockRepository);
+    controller.setThreadExecutor(new MockThreadpool());
     this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
   }
   
   @Test
   public void testFindByHash() throws Exception{
     Mockito.when(mockRepository.findByHash("ABC123")).thenReturn(MOCK_METADATA);
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/sha256/ABC123"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/sha256/ABC123"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(METADATA_REPOSNSE_AS_STRING, result.getResponse().getContentAsString());
   }
   
   @Test
   public void testFindByTag() throws Exception{
     Mockito.when(mockRepository.findByTag("foo")).thenReturn(Arrays.asList(MOCK_METADATA));
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tag/foo"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tag/foo"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("[" + METADATA_REPOSNSE_AS_STRING + "]", result.getResponse().getContentAsString());
   }
   
   @Test
   public void testFindByTags() throws Exception{
     Mockito.when(mockRepository.findByTags(Mockito.anyList())).thenReturn(Arrays.asList(MOCK_METADATA));
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tags")
+    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tags")
         .param("tags", "fooTag", "barTag"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("[" + METADATA_REPOSNSE_AS_STRING + "]", result.getResponse().getContentAsString());
   }
   
   @Test
   public void testFindByKeyValuePair() throws Exception{
     Mockito.when(mockRepository.findByKeyValuePair(Mockito.any(KeyValuePair.class))).thenReturn(Arrays.asList(MOCK_METADATA));
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta//key/fooKey/value/fooValue"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta//key/fooKey/value/fooValue"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("[" + METADATA_REPOSNSE_AS_STRING + "]", result.getResponse().getContentAsString());
   }
   
   @Test
   public void testFindByKeyValuePairs() throws Exception{
     List<KeyValuePair<String, String>> pairs = Arrays.asList(new KeyValuePair<String, String>("fooKey", "fooValue"));
     Mockito.when(mockRepository.findByKeyValuePairs(Mockito.anyList())).thenReturn(Arrays.asList(MOCK_METADATA));
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/keyvaluepairs")
+    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/keyvaluepairs")
         .param("keyValuePairsAsJson", KeyValueJsonConverter.convertToJson(pairs)))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("[" + METADATA_REPOSNSE_AS_STRING + "]", result.getResponse().getContentAsString());
   }
   
   @Test
@@ -121,5 +116,14 @@ public class MetadataStoreControllerTest extends Assert{
   public void testAddKeyValue() throws Exception{
     mockMvc.perform(MockMvcRequestBuilders.put("/storemeta/sha256/ABC123/addkeyvalue/fooKey/fooValue"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+  }
+  
+  private static class MockThreadpool extends ThreadPoolTaskExecutor {
+    private static final long serialVersionUID = 1L;
+    
+    @Override
+    public void execute(Runnable task){
+      task.run();
+    }
   }
 }
