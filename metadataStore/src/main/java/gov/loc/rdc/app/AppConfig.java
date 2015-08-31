@@ -14,13 +14,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AppConfig {
 private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
   
-  @Value("${corePoolSize:5}")
+  @Value("${core-pool-size:5}")
   private int corePoolSize;
   
-  @Value("${maxPoolSize:100}")
+  @Value("${max-pool-size:100}")
   private int maxPoolSize;
   
-  @Value("${waitForTasks:false}")
+  @Value("${wait-for-tasks:false}")
   private boolean waitForTasks;
 
   @Bean
