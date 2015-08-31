@@ -2,6 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
+import gov.loc.rdc.errors.JsonParamParseFail;
 import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
@@ -96,6 +97,7 @@ public class MetadataStoreController {
     }
     catch(Exception e){
       logger.error("Failed to find metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
+      throw new JsonParamParseFail(e);
     }
     
     return datas; 
@@ -136,6 +138,7 @@ public class MetadataStoreController {
     }
     catch(Exception e){
       logger.error("Failed to store metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
+      throw new JsonParamParseFail(e);
     }
   }
   

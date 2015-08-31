@@ -1,4 +1,5 @@
 rootProject.name = 'repo1.0'
 
-include 'objectStore',
-  'metadataStore'
+include 'core',
+  'metadataStore',
+  'objectStore'
