@@ -1,5 +1,5 @@
 rootProject.name = 'repo1.0'
 
-include 'core',
-  'metadataStore',
-  'objectStore'
+include 'metadataStore',
+  'objectStore',
+  'springWebAppBase'

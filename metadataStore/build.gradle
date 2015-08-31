@@ -10,7 +10,7 @@ buildscript {
 apply from: '../springboot.gradle'
 
 dependencies {
-    compile project(':core'),
+    compile project(':springWebAppBase'),
     'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
     'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
     'org.springframework.boot:spring-boot-starter-data-mongodb:1.2.5.RELEASE',
