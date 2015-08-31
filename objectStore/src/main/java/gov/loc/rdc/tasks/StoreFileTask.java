@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.errors.InternalError;
-import gov.loc.rdc.hash.HashUtils;
+import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * responsible for storing a file in the object store and returning the file hash
  */
-public class StoreFileTask implements Runnable, HashUtils{
+public class StoreFileTask implements Runnable, HashPathUtils{
   private static final Logger logger = LoggerFactory.getLogger(StoreFileTask.class);
   private static final String NO_HASH = "Hash was not computed.";
   

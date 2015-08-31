@@ -3,6 +3,8 @@ package gov.loc.rdc.controllers;
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
 import gov.loc.rdc.errors.JsonParamParseFail;
+import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
@@ -42,7 +44,11 @@ public class MetadataStoreController {
   
   @RequestMapping(value=FIND_BY_HASH_URL, method=RequestMethod.GET)
   public @ResponseBody Metadata findByHash(@PathVariable String algorithm, @PathVariable String hash){
-    //TODO check algorithm
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     Metadata data = repository.findByHash(hash);
     if(data == null){
       data = new Metadata("NO HASH", new HashSet<>(), new ArrayList<>());
@@ -53,7 +59,6 @@ public class MetadataStoreController {
   
   @RequestMapping(value=FIND_BY_TAG_URL, method=RequestMethod.GET)
   public @ResponseBody List<Metadata> findBytag(@PathVariable String tag){
-    //TODO check algorithm
     List<Metadata> datas = repository.findByTag(tag);
     if(datas == null){
       datas = new ArrayList<>();
@@ -64,7 +69,6 @@ public class MetadataStoreController {
   
   @RequestMapping(value=FIND_BY_TAGS_URL, method=RequestMethod.GET)
   public @ResponseBody List<Metadata> findBytags(@RequestParam List<String> tags){
-    //TODO check algorithm
     List<Metadata> datas = repository.findByTags(tags);
     if(datas == null){
       datas = new ArrayList<>();
@@ -75,7 +79,6 @@ public class MetadataStoreController {
   
   @RequestMapping(value=FIND_BY_KEY_VALUE_PAIR_URL, method=RequestMethod.GET)
   public @ResponseBody List<Metadata> findByKeyValuePair(@PathVariable String key, @PathVariable String value){
-    //TODO check algorithm
     List<Metadata> datas = repository.findByKeyValuePair(new KeyValuePair<String, String>(key, value));
     if(datas == null){
       datas = new ArrayList<>();
@@ -86,7 +89,6 @@ public class MetadataStoreController {
   
   @RequestMapping(value=FIND_BY_KEY_VALUE_PAIRS_URL, method=RequestMethod.GET)
   public @ResponseBody List<Metadata> findByKeyValuePairs(@RequestParam String keyValuePairsAsJson){
-    //TODO check algorithm
     List<Metadata> datas = new ArrayList<>();
     try{
       List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
@@ -105,13 +107,21 @@ public class MetadataStoreController {
   
   @RequestMapping(value=BASE_DELETE_URL, method=RequestMethod.DELETE)
   public void deleteMetadata(@PathVariable String algorithm, @PathVariable String hash){
-    //TODO check algorithm
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     repository.deleteHash(hash);
   }
   
   @RequestMapping(value=DELETE_TAG_URL, method=RequestMethod.DELETE)
   public void deleteTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
-    //TODO check algorithm
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     repository.deleteTagFromHash(tag, hash);
   }
   
@@ -120,7 +130,12 @@ public class MetadataStoreController {
                              @PathVariable String hash, 
                              @PathVariable String key, 
                              @PathVariable String value){
-    //TODO check algorithm
+    
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     repository.deleteKeyValueFromHash(new KeyValuePair<String, String>(key, value), hash);
   }
   
@@ -129,7 +144,12 @@ public class MetadataStoreController {
                             @PathVariable String hash,
                             @RequestParam Set<String> tags,
                             @RequestParam String keyValuePairsAsJson){
-    //TODO check algorithm
+    
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     try{
       List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
       Metadata data = new Metadata(hash, tags, keyValuePairs);
@@ -144,7 +164,11 @@ public class MetadataStoreController {
   
   @RequestMapping(value=ADD_TAG_URL, method={RequestMethod.POST, RequestMethod.PUT})
   public void addTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
-    //TODO check algorithm    
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+        
     logger.debug("Adding tag [{}] to hash [{}]", tag, hash);
     repository.saveTagToHash(tag, hash);
   }
@@ -154,11 +178,17 @@ public class MetadataStoreController {
                           @PathVariable String hash, 
                           @PathVariable String key, 
                           @PathVariable String value){
-    //TODO check algorithm
+    
+    if(!HashAlgorithm.algorithmSupported(algorithm)){
+      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
+      throw new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm");
+    }
+    
     logger.debug("Adding key:value [{}:{}] to hash [{}]", key, value, hash);
     repository.saveKeyValuePairToHash(new KeyValuePair<String, String>(key, value), hash);
   }
 
+  //used only for testing
   protected void setRepository(MetadataRepository repository) {
     this.repository = repository;
   }

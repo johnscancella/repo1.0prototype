@@ -5,8 +5,11 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface HashUtils {
-  public static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
+/**
+ * sharable methods for dealing with paths based on hashes.
+ */
+public interface HashPathUtils {
+  public static final Logger logger = LoggerFactory.getLogger(HashPathUtils.class);
   public static final String TWO_LETTER_REGEX = "(?<=\\G.{2})";
   
   public default File computeStoredLocation(File rootDir, String hash){
