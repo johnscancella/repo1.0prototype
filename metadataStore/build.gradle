@@ -7,8 +7,6 @@ plugins { id "nebula.os-package" version "2.2.6" }
 apply from: '../springboot.gradle'
 apply plugin: 'os-package'
 
-mainClassName="gov.loc.rdc.app.MetadataStoreApplication"
-
 dependencies {
   compile project(':springWebAppBase'),
       'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',

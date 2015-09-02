@@ -1,8 +1,5 @@
 package gov.loc.rdc.app;
 
-import gov.loc.rdc.repositories.MetadataRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,13 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("gov.loc.rdc")
 @EnableAutoConfiguration
 @EnableConfigurationProperties
-public class MetadataStoreApplication{
+public class MainApplication{
   
-  @Autowired
-  private MetadataRepository repository;
-
   public static void main(String[] args) {
-    SpringApplication app = new SpringApplication(MetadataStoreApplication.class);
+    SpringApplication app = new SpringApplication(MainApplication.class);
     app.setShowBanner(false);
     app.run(args);
   }

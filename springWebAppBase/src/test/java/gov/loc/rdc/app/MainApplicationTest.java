@@ -1,6 +1,6 @@
 package gov.loc.rdc.app;
 
-import gov.loc.rdc.app.ObjectStoreApplication;
+import gov.loc.rdc.app.MainApplication;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +8,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ObjectStoreApplication.class)
-public class ObjectStoreApplicationTest {
+@SpringApplicationConfiguration(classes = MainApplication.class)
+public class MainApplicationTest {
   
   @Test
   public void testSpringStartsCorrectly(){

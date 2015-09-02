@@ -5,7 +5,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import gov.loc.rdc.app.MetadataStoreApplication;
+import gov.loc.rdc.app.MainApplication;
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.repositories.MetadataRepository;
 
@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MetadataStoreApplication.class})
+@ContextConfiguration(classes = { MainApplication.class})
 public abstract class TaskTest extends Assert{
   protected static final String HASH = "ABC123";
   protected static final String ALGORITHM = "sha256";
