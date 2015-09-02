@@ -26,6 +26,13 @@ dependencies {
 ospackage {
   release '1'
   os = LINUX // only applied to RPM
+  summary "A restful metadata store backed by mongodb"
+  license "This software is in the Public Domain."
+  url "https://github.com/loc-rdc/repo1.0prototype"
+  vendor "Library of Congress"
+  packager "Library of Congress"
+  buildHost InetAddress.localHost.hostName
+  
   into '/opt/metadataStore'
 
   //TODO add requires here?
