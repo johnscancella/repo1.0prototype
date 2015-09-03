@@ -40,4 +40,4 @@ ospackage {
   from ("application.properties") { into "config" }
 }
 
-build.dependsOn buildRpm, buildDeb
+build.dependsOn buildRpm
