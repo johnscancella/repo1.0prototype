@@ -32,7 +32,7 @@ ospackage {
   packager "Library of Congress"
   buildHost InetAddress.localHost.hostName
   
-  into '/opt/metadataStore'
+  into '/opt/loc-rdc/metadataStore'
 
   //TODO add requires here?
 
