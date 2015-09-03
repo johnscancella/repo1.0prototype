@@ -34,7 +34,7 @@ ospackage {
   
   into '/opt/loc-rdc/metadataStore'
 
-  //TODO add requires here?
+  requires("jre-1.8.0", "", GREATER | EQUAL)
 
   from (startScripts) { into "bin" }
   from (configurations.runtime) { into "lib" }
