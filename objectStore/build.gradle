@@ -20,6 +20,7 @@ dependencies {
 
 //package as rpm or deb
 ospackage {
+  packageName project.name.toLowerCase() //deb requires all lowercase package names
   release '1'
   os = LINUX // only applied to RPM
   summary "A restful sha256 based object store"
@@ -38,3 +39,5 @@ ospackage {
   from (jar) { into "lib" }
   from ("application.properties") { into "config" }
 }
+
+build.dependsOn buildRpm, buildDeb
