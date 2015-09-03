@@ -1,11 +1,16 @@
 package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalError;
+import gov.loc.rdc.errors.ResourceNotFoundException;
+import gov.loc.rdc.errors.UnsupportedAlgorithm;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,14 +67,16 @@ public class FileStoreControllerTest extends Assert {
   
   @Test
   public void testGettingNonexistingFile() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC"))
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC"))
+        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals(ResourceNotFoundException.class, result.getAsyncResult().getClass());
   }
   
   @Test
   public void testBadAlgorithm() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo/123ABC"))
-    .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo/123ABC"))
+    .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    assertEquals(UnsupportedAlgorithm.class, result.getAsyncResult().getClass());
   }
   
   @Test
@@ -101,11 +108,11 @@ public class FileStoreControllerTest extends Assert {
   
   @Test
   public void testGettingExistingFile() throws Exception{
+    URL url = getClass().getClassLoader().getResource("testFile.txt");
     storeData();
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals("this is a test file that will be used during testing and contains text.", 
-        result.getResponse().getContentAsString());
+    assertArrayEquals(Files.readAllBytes(Paths.get(url.toURI())), (byte[])result.getAsyncResult());
   }
   
   @Test
