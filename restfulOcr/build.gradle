@@ -6,13 +6,12 @@ plugins { id "nebula.os-package" version "2.2.6" }
 
 apply from: '../springboot.gradle'
 
-mainClassName="gov.loc.rdc.app.MainApplication"
-
 dependencies {
     compile project(':springWebAppBase'),
     'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
     'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
-    'org.codehaus.groovy:groovy-all:2.4.0'
+    'org.codehaus.groovy:groovy-all:2.4.0',
+    'net.sourceforge.tess4j:tess4j:2.0.1'
 
     testCompile 'junit:junit:4.12',
     'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'
@@ -23,7 +22,7 @@ ospackage {
   packageName project.name.toLowerCase() //deb requires all lowercase package names
   release '1'
   os = LINUX // only applied to RPM
-  summary "A restful sha256 based object store"
+  summary "A restful implmentation of file OCR"
   license "This software is in the Public Domain."
   url "https://github.com/loc-rdc/repo1.0prototype"
   vendor "Library of Congress"
