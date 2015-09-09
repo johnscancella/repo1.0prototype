@@ -9,8 +9,8 @@ if(project.version == "unspecified"){
 
 startScripts{
   doLast{
-    unixScript.text = addPropertiesFileFlag(unixScript, mainClassName, ' --spring.config.location=file:$APP_HOME/config/application.properties')
-    windowsScript.text = addPropertiesFileFlag(windowsScript, mainClassName, ' --spring.config.location=file:%APP_HOME%/config/application.properties')
+    unixScript.text = tweakRunScript(unixScript, mainClassName, ' --spring.config.location=file:$APP_HOME/config/application.properties', 'METADATA_STORE_OPTS="-Dapp.home=$APP_HOME"')
+    windowsScript.text = tweakRunScript(windowsScript, mainClassName, ' --spring.config.location=file:%APP_HOME%/config/application.properties', 'set METADATA_STORE_OPTS="-Dapp.home=%APP_HOME%"')
   }
 }
 
@@ -24,11 +24,14 @@ distributions {
   }
 }
 
-public String addPropertiesFileFlag(File scriptFile, String clazz, String flagToAdd){
+public String tweakRunScript(File scriptFile, String clazz, String flagToAdd, String applicationOpts){
   StringBuilder sb = new StringBuilder()
   scriptFile.text.eachLine { String line ->
     if(line.contains(clazz)){
       sb.append(line).append(flagToAdd).append("\n")
+    }else if (line.matches("(set )?APP_HOME.*")){
+      //add the application specfic options AFTER APP_HOME is set, so we can reference it
+      sb.append(line).append("\n").append(applicationOpts).append("\n")
     }else{
       sb.append(line).append("\n")
     }
