@@ -3,8 +3,6 @@ package gov.loc.rdc.repositories;
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,22 +103,11 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("hash").is(hash));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
     
-    metadata.getTags().add(tag);
-    mongoTemplate.save(metadata);
-  }
-
-  @Override
-  public void save(String hash) {
-    mongoTemplate.save(new Metadata(hash, new HashSet<String>(), new ArrayList<KeyValuePair<String, String>>()));
-  }
-
-  @Override
-  public void saveTagsToHash(List<String> tags, String hash) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("hash").is(hash));
-    Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
+    if(metadata == null){
+      metadata = new Metadata(hash);
+    }
     
-    metadata.getTags().addAll(tags);
+    metadata.getTags().add(tag);
     mongoTemplate.save(metadata);
   }
 
@@ -130,17 +117,11 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("hash").is(hash));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
     
-    metadata.getKeyValuePairs().add(keyValuePair);
-    mongoTemplate.save(metadata);
-  }
-
-  @Override
-  public void saveKeyValuePairsToHash(List<KeyValuePair<String, String>> keyValuePairs, String hash) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("hash").is(hash));
-    Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
+    if(metadata == null){
+      metadata = new Metadata(hash);
+    }
     
-    metadata.getKeyValuePairs().addAll(keyValuePairs);
+    metadata.getKeyValuePairs().add(keyValuePair);
     mongoTemplate.save(metadata);
   }
 }

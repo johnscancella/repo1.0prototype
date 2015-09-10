@@ -35,4 +35,16 @@ public class FindByTagsTaskTest extends TaskTest {
     assertEquals(1, typedResult.size());
     assertEquals(data, typedResult.get(0));
   }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testFindByTag() {
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
+    FindByTagsTask sut = new FindByTagsTask(result, repository, TAG1, TAG2);
+    sut.run();
+    assertTrue(result.getResult() instanceof List<?>);
+    List<Metadata> typedResult = (List<Metadata>) result.getResult();
+    assertEquals(1, typedResult.size());
+    assertEquals(data, typedResult.get(0));
+  }
 }

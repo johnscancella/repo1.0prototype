@@ -23,6 +23,9 @@ public class Metadata {
     this.tags = new HashSet<>();
     this.keyValuePairs = new ArrayList<>();
   }
+  public Metadata(String hash){
+    this.hash = hash;
+  }
   public Metadata(String hash, Set<String> tags, List<KeyValuePair<String, String>> keyValuePairs){
     this.hash = hash;
     this.tags = tags;

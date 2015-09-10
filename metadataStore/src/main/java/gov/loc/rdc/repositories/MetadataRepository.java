@@ -20,10 +20,7 @@ public interface MetadataRepository{
   public void deleteKeyValueFromHash(KeyValuePair<String, String> keyValue, String hash);
   
   public void save(Metadata data);
-  public void save(String hash);
   public void saveTagToHash(String tag, String hash);
-  public void saveTagsToHash(List<String> tags, String hash);
   public void saveKeyValuePairToHash(KeyValuePair<String, String> keyValuePair, String hash);
-  public void saveKeyValuePairsToHash(List<KeyValuePair<String, String>> keyValuePairs, String hash);
   
 }

@@ -6,7 +6,7 @@ import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.tasks.AddKeyValuePairTask;
 import gov.loc.rdc.tasks.AddTagTask;
 import gov.loc.rdc.tasks.DeleteKeyValuePairTask;
-import gov.loc.rdc.tasks.DeleteMetadataTask;
+import gov.loc.rdc.tasks.DeleteTagTask;
 import gov.loc.rdc.tasks.FindByHashTask;
 import gov.loc.rdc.tasks.FindByKeyValuePairTask;
 import gov.loc.rdc.tasks.FindByKeyValuePairsTask;
@@ -108,7 +108,7 @@ public class MetadataStoreController {
   public DeferredResult<Boolean> deleteTag(@PathVariable String algorithm, @PathVariable String hash, @PathVariable String tag){
     DeferredResult<Boolean> result = new DeferredResult<>();
     
-    DeleteMetadataTask task = new DeleteMetadataTask(result, repository, algorithm, hash);
+    DeleteTagTask task = new DeleteTagTask(result, repository, algorithm, hash, tag);
     threadExecutor.execute(task);
     
     return result;
