@@ -1,6 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
+import gov.loc.rdc.errors.UnsupportedAlgorithm;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
 import java.util.ArrayList;
@@ -31,5 +32,14 @@ public class StoreMetadataTaskTest extends TaskTest {
     StoreMetadataTask sut = new StoreMetadataTask(result, repository, ALGORITHM, HASH, tags, keyValuePairsAsJson);
     sut.run();
     assertTrue(result.getResult() == Boolean.TRUE);
+  }
+  
+  @Test
+  public void testAlgorithmNotSupported() throws JsonProcessingException{
+    DeferredResult<Boolean> result = new DeferredResult<>();
+    String keyValuePairsAsJson = KeyValueJsonConverter.convertToJson(keyValuePairs);
+    StoreMetadataTask sut = new StoreMetadataTask(result, repository, BAD_ALGORITHM, HASH, tags, keyValuePairsAsJson);
+    sut.run();
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
   }
 }

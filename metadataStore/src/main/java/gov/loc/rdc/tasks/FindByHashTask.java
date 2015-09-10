@@ -5,9 +5,6 @@ import gov.loc.rdc.errors.UnsupportedAlgorithm;
 import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -36,7 +33,7 @@ public class FindByHashTask implements Runnable{
     else{
       Metadata data = repository.findByHash(hash);
       if(data == null){
-        data = new Metadata("NO HASH", new HashSet<>(), new ArrayList<>());
+        data = new Metadata();
       }
       result.setResult(data);
     }

@@ -20,7 +20,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = { MainApplication.class})
 public abstract class TaskTest extends Assert{
   protected static final String HASH = "ABC123";
+  protected static final String BAD_HASH = "FOO123";
   protected static final String ALGORITHM = "sha256";
+  protected static final String BAD_ALGORITHM = "md5";
   protected static final String TAG1 = "fooTag1";
   protected static final String TAG2 = "fooTag2";
   protected static final String KEY1 = "fooKey";
