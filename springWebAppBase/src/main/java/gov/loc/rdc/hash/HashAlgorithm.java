@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum HashAlgorithm {
-  SHA256;
+  SHA256,
+  MD5;
   
-  private static final List<String> ACCEPTED_HASH_ALGORITHMS = Arrays.asList("sha256", "sha-256");
+  private static final List<String> ACCEPTED_HASH_ALGORITHMS = Arrays.asList("sha256", "SHA256", "sha-256", "SHA-256");
   
   public static boolean algorithmSupported(String algorithm){
     if(!ACCEPTED_HASH_ALGORITHMS.contains(algorithm)){
