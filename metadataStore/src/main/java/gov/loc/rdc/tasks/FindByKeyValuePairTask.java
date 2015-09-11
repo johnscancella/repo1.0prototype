@@ -4,7 +4,6 @@ import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
 import gov.loc.rdc.repositories.MetadataRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,9 +26,8 @@ public class FindByKeyValuePairTask implements Runnable{
   @Override
   public void run() {
     List<Metadata> datas = repository.findByKeyValuePair(pair);
-    if(datas == null){
+    if(datas.size() == 0){
       logger.debug("No metadata found for keyvalue pair [{}]", pair);
-      datas = new ArrayList<>();
     }
     
     result.setResult(datas);

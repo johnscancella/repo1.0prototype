@@ -16,6 +16,8 @@ public class FindByKeyValuePairTaskTest extends TaskTest {
   
   @Before
   public void setup(){
+    clearDatabase();
+    
     tags = new HashSet<>();
     keyValuePairs = new ArrayList<>();
     keyValuePairs.add(new KeyValuePair<String, String>(KEY1, VALUE1));
@@ -34,5 +36,16 @@ public class FindByKeyValuePairTaskTest extends TaskTest {
     List<Metadata> typedResult = (List<Metadata>) result.getResult();
     assertEquals(1, typedResult.size());
     assertEquals(data, typedResult.get(0));
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testDataNotFound(){
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
+    FindByKeyValuePairTask sut = new FindByKeyValuePairTask(result, repository, new KeyValuePair<String, String>("nonexistingKey", "nonexistingValue"));
+    sut.run();
+    assertTrue(result.getResult() instanceof List<?>);
+    List<Metadata> typedResult = (List<Metadata>) result.getResult();
+    assertEquals(0, typedResult.size());
   }
 }

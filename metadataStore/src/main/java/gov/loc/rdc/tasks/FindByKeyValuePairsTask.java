@@ -6,7 +6,6 @@ import gov.loc.rdc.errors.JsonParamParseFail;
 import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,8 +31,8 @@ public class FindByKeyValuePairsTask implements Runnable{
     try{
       List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
       datas = repository.findByKeyValuePairs(keyValuePairs);
-      if(datas == null){
-        datas = new ArrayList<>();
+      if(datas.size() == 0){
+        logger.debug("No metadata found for json key value pairs [{}]", keyValuePairsAsJson);
       }
       result.setResult(datas);
     }

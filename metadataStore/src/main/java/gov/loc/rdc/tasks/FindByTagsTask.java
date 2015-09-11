@@ -4,7 +4,6 @@ import gov.loc.rdc.entities.Metadata;
 import gov.loc.rdc.errors.MissingParameters;
 import gov.loc.rdc.repositories.MetadataRepository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,9 +40,8 @@ public class FindByTagsTask implements Runnable{
   
   private void searchForOneTag(){
     List<Metadata> datas = repository.findByTag(tags[0]);
-    if(datas == null){
+    if(datas.size() == 0){
       logger.debug("No metadata found for tag [{}]", tags[0]);
-      datas = new ArrayList<>();
     }
     
     result.setResult(datas);
@@ -51,9 +49,8 @@ public class FindByTagsTask implements Runnable{
   
   private void searchForManyTags(){
     List<Metadata> datas = repository.findByTags(Arrays.asList(tags));
-    if(datas == null){
+    if(datas.size() == 0){
       logger.debug("No metadata found for tags [{}]", Arrays.asList(tags));
-      datas = new ArrayList<>();
     }
     
     result.setResult(datas);

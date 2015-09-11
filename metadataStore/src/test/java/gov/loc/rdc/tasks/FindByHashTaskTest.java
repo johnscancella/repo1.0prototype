@@ -16,6 +16,8 @@ public class FindByHashTaskTest extends TaskTest {
   
   @Before
   public void setup(){
+    clearDatabase();
+    
     tags = new HashSet<>();
     tags.add(TAG1);
     keyValuePairs = new ArrayList<>();

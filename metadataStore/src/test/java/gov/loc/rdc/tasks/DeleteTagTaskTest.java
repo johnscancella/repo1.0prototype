@@ -10,12 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class DeleteMetadataTaskTest extends TaskTest {
+public class DeleteTagTaskTest extends TaskTest {
   @Before
   public void setup(){
     clearDatabase();
     
     tags = new HashSet<>();
+    tags.add(TAG1);
+    tags.add(TAG2);
     keyValuePairs = new ArrayList<>();
     
     Metadata data = new Metadata(HASH, tags, keyValuePairs);
@@ -23,9 +25,9 @@ public class DeleteMetadataTaskTest extends TaskTest {
   }
   
   @Test
-  public void testDeleteMetadata(){
+  public void testDeleteKeyValuePair(){
     DeferredResult<Boolean> result = new DeferredResult<>();
-    DeleteMetadataTask sut = new DeleteMetadataTask(result, repository, ALGORITHM, HASH);
+    DeleteTagTask sut = new DeleteTagTask(result, repository, ALGORITHM, HASH, TAG1);
     sut.run();
     assertTrue(result.getResult() == Boolean.TRUE);
   }
@@ -33,7 +35,7 @@ public class DeleteMetadataTaskTest extends TaskTest {
   @Test
   public void testAlgorithmNotSupported(){
     DeferredResult<Boolean> result = new DeferredResult<>();
-    DeleteMetadataTask sut = new DeleteMetadataTask(result, repository, BAD_ALGORITHM, HASH);
+    DeleteTagTask sut = new DeleteTagTask(result, repository, BAD_ALGORITHM, HASH, TAG1);
     sut.run();
     assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
   }

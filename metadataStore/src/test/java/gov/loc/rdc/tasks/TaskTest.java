@@ -38,4 +38,9 @@ public abstract class TaskTest extends Assert{
   
   protected Set<String> tags;
   protected List<KeyValuePair<String, String>> keyValuePairs;
+  
+  protected void clearDatabase(){
+    repository.deleteHash(HASH);
+    repository.deleteHash(BAD_HASH);
+  }
 }

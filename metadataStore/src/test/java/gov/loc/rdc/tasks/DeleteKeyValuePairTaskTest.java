@@ -14,6 +14,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class DeleteKeyValuePairTaskTest extends TaskTest {
   @Before
   public void setup(){
+    clearDatabase();
+    
     tags = new HashSet<>();
     keyValuePairs = new ArrayList<>();
     keyValuePairs.add(new KeyValuePair<String, String>(KEY1, VALUE1));

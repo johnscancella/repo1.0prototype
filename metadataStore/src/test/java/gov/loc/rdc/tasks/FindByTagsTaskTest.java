@@ -1,6 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.Metadata;
+import gov.loc.rdc.errors.MissingParameters;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ public class FindByTagsTaskTest extends TaskTest {
   
   @Before
   public void setup(){
+    clearDatabase();
+    
     tags = new HashSet<>();
     tags.add(TAG1);
     tags.add(TAG2);
@@ -38,6 +41,17 @@ public class FindByTagsTaskTest extends TaskTest {
   
   @SuppressWarnings("unchecked")
   @Test
+  public void testNoneExistingTags() {
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
+    FindByTagsTask sut = new FindByTagsTask(result, repository, "nonexistingTag1", "nonexistingTag2");
+    sut.run();
+    assertTrue(result.getResult() instanceof List<?>);
+    List<Metadata> typedResult = (List<Metadata>) result.getResult();
+    assertEquals(0, typedResult.size());
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
   public void testFindByTag() {
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     FindByTagsTask sut = new FindByTagsTask(result, repository, TAG1, TAG2);
@@ -46,5 +60,24 @@ public class FindByTagsTaskTest extends TaskTest {
     List<Metadata> typedResult = (List<Metadata>) result.getResult();
     assertEquals(1, typedResult.size());
     assertEquals(data, typedResult.get(0));
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testNoneExistingTag() {
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
+    FindByTagsTask sut = new FindByTagsTask(result, repository, "nonexistingTag1");
+    sut.run();
+    assertTrue(result.getResult() instanceof List<?>);
+    List<Metadata> typedResult = (List<Metadata>) result.getResult();
+    assertEquals(0, typedResult.size());
+  }
+  
+  @Test
+  public void testMissingTagReturnsError() {
+    DeferredResult<List<Metadata>> result = new DeferredResult<>();
+    FindByTagsTask sut = new FindByTagsTask(result, repository);
+    sut.run();
+    assertTrue(result.getResult() instanceof MissingParameters);
   }
 }
