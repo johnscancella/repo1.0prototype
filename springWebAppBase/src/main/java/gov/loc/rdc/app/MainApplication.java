@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * starts the spring-boot application. 
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("gov.loc.rdc")
 @EnableAutoConfiguration
 @EnableConfigurationProperties
+@EnableScheduling
 public class MainApplication{
   
   public static void main(String[] args) {
