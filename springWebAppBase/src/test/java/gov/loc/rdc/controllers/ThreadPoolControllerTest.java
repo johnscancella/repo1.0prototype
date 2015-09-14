@@ -103,4 +103,29 @@ public class ThreadPoolControllerTest extends Assert{
     assertEquals(false, Boolean.parseBoolean(result.getResponse().getContentAsString()));
   }
   
+  @Test(expected=IllegalArgumentException.class)
+  public void testParseBooleanWithNull(){
+    ThreadPoolController sut = new ThreadPoolController();
+    sut.parseBoolean(null);
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void testParseBooleanWithBlankString(){
+    ThreadPoolController sut = new ThreadPoolController();
+    sut.parseBoolean("");
+  }
+  
+  @Test
+  public void testParseBoolean(){
+    ThreadPoolController sut = new ThreadPoolController();
+    boolean bool = sut.parseBoolean("true");
+    assertTrue(bool);
+    bool = sut.parseBoolean("True");
+    assertTrue(bool);
+    bool = sut.parseBoolean("false");
+    assertFalse(bool);
+    bool = sut.parseBoolean("False");
+    assertFalse(bool);
+  }
+  
 }
