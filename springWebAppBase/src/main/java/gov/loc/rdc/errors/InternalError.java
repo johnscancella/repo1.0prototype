@@ -10,4 +10,8 @@ public class InternalError extends RuntimeException {
   public InternalError(Throwable cause){
     super(cause);
   }
+  
+  public InternalError(String message){
+    super(message);
+  }
 }

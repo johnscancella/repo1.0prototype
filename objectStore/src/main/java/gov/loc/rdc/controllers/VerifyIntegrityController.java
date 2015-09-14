@@ -1,5 +1,7 @@
 package gov.loc.rdc.controllers;
 
+import gov.loc.rdc.errors.InternalError;
+import gov.loc.rdc.errors.MissingParameters;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -13,45 +15,73 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 public class VerifyIntegrityController {
   private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityController.class);
+  private static final String VERIFY_INTEGRITY_URL = "/verifyintegrity";
 
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
 
   @Autowired
   private Hasher hasher;
+  
+  @RequestMapping(value=VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
+  public void restfulVerifyIntegrity(@RequestParam(required=false) String rootDir){
+    if(rootDir == null || rootDir.equals("")){
+      logger.debug("rootDir not supplied during http request. Defaulting to [{}]", objectStoreRootDir);
+      scan(objectStoreRootDir);
+      return;
+    }
+    
+    File startingDir = new File(rootDir);
+    if(startingDir.exists() && startingDir.isDirectory()){
+      scan(objectStoreRootDir);
+    }
+    else{
+      throw new MissingParameters("[" + rootDir + "] is not a directory. Please supply a starting directory for integrity verification");
+    }
+  }
 
   @Scheduled(cron = "${integrity-wait-cron:0 0 0 * * *}")
   public void verifyIntegrity() {
-    logger.info("Starting integrity verification on [{}] directory", objectStoreRootDir);
+    scan(objectStoreRootDir);
+  }
+  
+  protected void scan(File StartingDir){
+    logger.info("Starting integrity verification on [{}] directory", StartingDir);
     try {
-      Files.walk(objectStoreRootDir.toPath(), FileVisitOption.FOLLOW_LINKS).filter(path -> path.toFile().isFile()).forEach((path) -> visitFile(path));
+      Files.walk(StartingDir.toPath(), FileVisitOption.FOLLOW_LINKS).filter(path -> path.toFile().isFile()).forEach((path) -> visitFile(path));
     }
     catch (Exception e) {
       logger.error("Failed to walk tree", e);
+      throw new InternalError(e);
       // TODO some other notification?
     }
-    logger.info("Finished integrity verification on [{}] directory", objectStoreRootDir);
+    logger.info("Finished integrity verification on [{}] directory", StartingDir);
   }
 
-  private void visitFile(Path path) {
+  protected void visitFile(Path path) {
     try {
       String hash = hasher.hash(Files.newInputStream(path, StandardOpenOption.READ));
       boolean isVerified = hash.equals(path.toFile().getName());
       if (!isVerified) {
-        logger.error("Found integrity error with file [{}]. Computed hash is [{}]", path, hash);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Found integrity error with file ").append(path).append("]. Computed hash is [").append(hash).append("]");
+        logger.error(sb.toString());
+        throw new InternalError(sb.toString());
         // TODO some other notification?
       }
-      else {
-        logger.debug("Verified [{}] matches computed hash.", path);
-      }
+      logger.debug("Verified [{}] matches computed hash.", path);
     }
     catch (Exception e) {
       logger.error("Failed to compute hash for file [{}]", path, e);
+      throw new InternalError(e);
       // TODO some other notification
     }
   }
