@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.JsonParamParseFail;
+import gov.loc.rdc.errors.JsonParamParseFailException;
 import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
@@ -38,7 +38,7 @@ public class FindByKeyValuePairsTask implements Runnable{
     }
     catch(Exception e){
       logger.error("Failed to find metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
-      result.setErrorResult(new JsonParamParseFail("Failed to find metadata. Perhaps it is not valid JSON"));
+      result.setErrorResult(new JsonParamParseFailException("Failed to find metadata. Perhaps it is not valid JSON"));
     }
   }
 }

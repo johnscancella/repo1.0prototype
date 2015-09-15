@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
 
@@ -33,7 +33,7 @@ public class DeleteKeyValuePairTask implements Runnable{
   public void run() {
     if(!HashAlgorithm.algorithmSupported(algorithm)){
       logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      result.setErrorResult(new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm"));
+      result.setErrorResult(new UnsupportedAlgorithmException("Only sha256 is currently supported for hashing algorithm"));
     }
     
     repository.deleteKeyValueFromHash(pair, hash);

@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.JsonParamParseFail;
+import gov.loc.rdc.errors.JsonParamParseFailException;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class FindByKeyValuePairsTaskTest extends TaskTest {
     String keyValuePairsAsJson = "some invalid json";
     FindByKeyValuePairsTask sut = new FindByKeyValuePairsTask(result, repository, keyValuePairsAsJson);
     sut.run();
-    assertTrue(result.getResult() instanceof JsonParamParseFail);
+    assertTrue(result.getResult() instanceof JsonParamParseFailException);
   }
   
   //TODO test invalid json

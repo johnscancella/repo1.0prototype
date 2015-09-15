@@ -1,6 +1,6 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.errors.InternalError;
+import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.hash.SHA256Hasher;
 
 import java.io.File;
@@ -34,7 +34,7 @@ public class VerifyIntegrityControllerTest {
     sut.verifyIntegrity();
   }
   
-  @Test(expected=InternalError.class)
+  @Test(expected=InternalErrorException.class)
   public void testInvalidFilesThrowError(){
     File badFilesDir = new File(getClass().getClassLoader().getResource("invalidObjectStore").getFile());
     sut.setObjectStoreRootDir(badFilesDir);

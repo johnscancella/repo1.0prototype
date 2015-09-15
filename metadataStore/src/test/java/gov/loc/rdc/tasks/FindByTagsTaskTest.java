@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.MissingParameters;
+import gov.loc.rdc.errors.MissingParametersException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,6 +78,6 @@ public class FindByTagsTaskTest extends TaskTest {
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     FindByTagsTask sut = new FindByTagsTask(result, repository);
     sut.run();
-    assertTrue(result.getResult() instanceof MissingParameters);
+    assertTrue(result.getResult() instanceof MissingParametersException);
   }
 }

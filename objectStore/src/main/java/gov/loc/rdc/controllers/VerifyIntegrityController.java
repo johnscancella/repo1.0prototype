@@ -1,7 +1,7 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.errors.InternalError;
-import gov.loc.rdc.errors.MissingParameters;
+import gov.loc.rdc.errors.InternalErrorException;
+import gov.loc.rdc.errors.MissingParametersException;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -44,7 +44,7 @@ public class VerifyIntegrityController {
       scan(objectStoreRootDir);
     }
     else{
-      throw new MissingParameters("[" + rootDir + "] is not a directory. Please supply a starting directory for integrity verification");
+      throw new MissingParametersException("[" + rootDir + "] is not a directory. Please supply a starting directory for integrity verification");
     }
   }
 
@@ -60,7 +60,7 @@ public class VerifyIntegrityController {
     }
     catch (Exception e) {
       logger.error("Failed to walk tree", e);
-      throw new InternalError(e);
+      throw new InternalErrorException(e);
       // TODO some other notification?
     }
     logger.info("Finished integrity verification on [{}] directory", StartingDir);
@@ -74,14 +74,14 @@ public class VerifyIntegrityController {
         StringBuilder sb = new StringBuilder();
         sb.append("Found integrity error with file ").append(path).append("]. Computed hash is [").append(hash).append("]");
         logger.error(sb.toString());
-        throw new InternalError(sb.toString());
+        throw new InternalErrorException(sb.toString());
         // TODO some other notification?
       }
       logger.debug("Verified [{}] matches computed hash.", path);
     }
     catch (Exception e) {
       logger.error("Failed to compute hash for file [{}]", path, e);
-      throw new InternalError(e);
+      throw new InternalErrorException(e);
       // TODO some other notification
     }
   }

@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public class AddKeyValuePairTaskTest extends TaskTest{
     DeferredResult<Boolean> result = new DeferredResult<>();
     AddKeyValuePairTask sut = new AddKeyValuePairTask(result, repository, BAD_ALGORITHM, HASH, new KeyValuePair<String, String>(KEY1, VALUE1));
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
   
   private void saveData(){

@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +35,6 @@ public class DeleteMetadataTaskTest extends TaskTest {
     DeferredResult<Boolean> result = new DeferredResult<>();
     DeleteMetadataTask sut = new DeleteMetadataTask(result, repository, BAD_ALGORITHM, HASH);
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
 }

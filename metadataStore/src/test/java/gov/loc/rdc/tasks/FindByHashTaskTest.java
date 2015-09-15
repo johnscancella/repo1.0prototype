@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class FindByHashTaskTest extends TaskTest {
     DeferredResult<Metadata> result = new DeferredResult<>();
     FindByHashTask sut = new FindByHashTask(result, repository, BAD_ALGORITHM, HASH);
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
   
   @Test

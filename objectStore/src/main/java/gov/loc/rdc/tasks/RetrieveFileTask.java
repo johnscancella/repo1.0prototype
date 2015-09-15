@@ -1,8 +1,8 @@
 package gov.loc.rdc.tasks;
 
-import gov.loc.rdc.errors.InternalError;
+import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.hash.HashPathUtils;
 
@@ -37,7 +37,7 @@ public class RetrieveFileTask implements Runnable, HashPathUtils {
   public void run() {
     if (!HashAlgorithm.algorithmSupported(algorithm)) {
       logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      result.setErrorResult(new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm"));
+      result.setErrorResult(new UnsupportedAlgorithmException("Only sha256 is currently supported for hashing algorithm"));
       return;
     }
 
@@ -51,7 +51,7 @@ public class RetrieveFileTask implements Runnable, HashPathUtils {
       }
       catch (IOException e) {
         logger.error("Unable to read file [{}]", storedFile.toURI(), e);
-        result.setErrorResult(new InternalError(e));
+        result.setErrorResult(new InternalErrorException(e));
       }
    }
     else {

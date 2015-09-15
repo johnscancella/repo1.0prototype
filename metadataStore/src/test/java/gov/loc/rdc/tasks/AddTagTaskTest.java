@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class AddTagTaskTest extends TaskTest {
     DeferredResult<Boolean> result = new DeferredResult<>();
     AddTagTask sut = new AddTagTask(result, repository, BAD_ALGORITHM, HASH, TAG1);
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
   
   private void saveData(){

@@ -1,8 +1,8 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.errors.InternalError;
+import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -76,7 +76,7 @@ public class FileStoreControllerTest extends Assert {
   public void testBadAlgorithm() throws Exception{
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo/123ABC"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(UnsupportedAlgorithm.class, result.getAsyncResult().getClass());
+    assertEquals(UnsupportedAlgorithmException.class, result.getAsyncResult().getClass());
   }
   
   @Test
@@ -103,7 +103,7 @@ public class FileStoreControllerTest extends Assert {
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile")
       .file(multipartFile))
           .andReturn();
-    assertEquals(InternalError.class, result.getAsyncResult().getClass());
+    assertEquals(InternalErrorException.class, result.getAsyncResult().getClass());
   }
   
   @Test

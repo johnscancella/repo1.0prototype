@@ -1,6 +1,6 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.errors.MissingParameters;
+import gov.loc.rdc.errors.MissingParametersException;
 
 import javax.annotation.Resource;
 
@@ -29,7 +29,7 @@ public class ThreadPoolController {
       return true;
     }catch(Exception e){
       logger.error("Failed to set thread core pool core size to [{}]", size, e);
-      throw new MissingParameters("Failed to set thread core pool core size to [" + size + "] cause it is not a number");
+      throw new MissingParametersException("Failed to set thread core pool core size to [" + size + "] cause it is not a number");
     }
   }
   
@@ -42,7 +42,7 @@ public class ThreadPoolController {
       return true;
     }catch(NumberFormatException e){
       logger.error("Failed to set thread max pool core size to [{}]", size, e);
-      throw new MissingParameters("Failed to set thread max pool core size to [" + size + "] cause it is not a number");
+      throw new MissingParametersException("Failed to set thread max pool core size to [" + size + "] cause it is not a number");
     }
   }
   
@@ -55,7 +55,7 @@ public class ThreadPoolController {
       return true;
     }catch(Exception e){
       logger.error("Failed to set thread wait for shutdown to [{}]", bool, e);
-      throw new MissingParameters("Failed to set thread wait for shutdown to [" + bool + "] cause it is not a boolean");
+      throw new MissingParametersException("Failed to set thread wait for shutdown to [" + bool + "] cause it is not a boolean");
     }
   }
   

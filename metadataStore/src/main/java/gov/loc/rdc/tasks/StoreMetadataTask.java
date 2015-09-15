@@ -5,8 +5,8 @@ import java.util.Set;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.JsonParamParseFail;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.JsonParamParseFailException;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
@@ -42,7 +42,7 @@ public class StoreMetadataTask implements Runnable{
   public void run() {
     if(!HashAlgorithm.algorithmSupported(algorithm)){
       logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      result.setErrorResult(new UnsupportedAlgorithm("Only sha256 is currently supported for hashing algorithm"));
+      result.setErrorResult(new UnsupportedAlgorithmException("Only sha256 is currently supported for hashing algorithm"));
     }
     
     try{
@@ -54,7 +54,7 @@ public class StoreMetadataTask implements Runnable{
     }
     catch(Exception e){
       logger.error("Failed to store metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
-      result.setErrorResult(new JsonParamParseFail("Failed to store metadata. Perhaps it is not valid JSON?"));
+      result.setErrorResult(new JsonParamParseFailException("Failed to store metadata. Perhaps it is not valid JSON?"));
     }
   }
 }

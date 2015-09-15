@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +39,6 @@ public class DeleteKeyValuePairTaskTest extends TaskTest {
     KeyValuePair<String, String> pair = new KeyValuePair<String, String>(KEY1, VALUE1);
     DeleteKeyValuePairTask sut = new DeleteKeyValuePairTask(result, repository, BAD_ALGORITHM, HASH, pair);
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
 }

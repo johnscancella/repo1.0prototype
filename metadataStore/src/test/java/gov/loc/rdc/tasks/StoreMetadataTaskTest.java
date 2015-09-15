@@ -1,8 +1,8 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.KeyValuePair;
-import gov.loc.rdc.errors.JsonParamParseFail;
-import gov.loc.rdc.errors.UnsupportedAlgorithm;
+import gov.loc.rdc.errors.JsonParamParseFailException;
+import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.utils.KeyValueJsonConverter;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class StoreMetadataTaskTest extends TaskTest {
     String keyValuePairsAsJson = KeyValueJsonConverter.convertToJson(keyValuePairs);
     StoreMetadataTask sut = new StoreMetadataTask(result, repository, BAD_ALGORITHM, HASH, tags, keyValuePairsAsJson);
     sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithm);
+    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
   
   @Test
@@ -52,6 +52,6 @@ public class StoreMetadataTaskTest extends TaskTest {
     String keyValuePairsAsJson = "some invalid json";
     StoreMetadataTask sut = new StoreMetadataTask(result, repository, ALGORITHM, HASH, tags, keyValuePairsAsJson);
     sut.run();
-    assertTrue(result.getResult() instanceof JsonParamParseFail);
+    assertTrue(result.getResult() instanceof JsonParamParseFailException);
   }
 }

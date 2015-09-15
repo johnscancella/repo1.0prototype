@@ -1,7 +1,7 @@
 package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.MissingParameters;
+import gov.loc.rdc.errors.MissingParametersException;
 import gov.loc.rdc.repositories.MetadataRepository;
 
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class FindByTagsTask implements Runnable{
   public void run() {
     if(tags.length == 0){
       logger.error("At least one tag is required to search by tag.");
-      result.setErrorResult(new MissingParameters("At least one tag is required to search by tag."));
+      result.setErrorResult(new MissingParametersException("At least one tag is required to search by tag."));
     }
     else if(tags.length == 1){
       searchForOneTag();
