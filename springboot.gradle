@@ -9,8 +9,8 @@ if(project.version == "unspecified"){
 
 startScripts{
   doLast{
-    unixScript.text = tweakRunScript(unixScript, mainClassName, ' --spring.config.location=file:$APP_HOME/config/application.properties', 'DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS \"-Dapp.home=$APP_HOME\""')
-    windowsScript.text = tweakRunScript(windowsScript, mainClassName, ' --spring.config.location=file:%APP_HOME%/config/application.properties', 'set DEFAULT_JVM_OPTS="%DEFAULT_JVM_OPTS% \"-Dapp.home=%APP_HOME%\""')
+    unixScript.text = tweakRunScript(unixScript, mainClassName, ' --spring.config.location=file:$APP_HOME/config/application.properties', 'DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS \\"-Dapp.home=$APP_HOME\\""')
+    windowsScript.text = tweakRunScript(windowsScript, mainClassName, ' --spring.config.location=file:%APP_HOME%/config/application.properties', 'set DEFAULT_JVM_OPTS="%DEFAULT_JVM_OPTS% \\"-Dapp.home=%APP_HOME%\\""')
   }
 }
 
