@@ -12,16 +12,18 @@ public class UserRequestLoggingInterceptor extends HandlerInterceptorAdapter {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    logger.info("Request from [{}] on [{}] for [{}]", request.getRemoteUser(), request.getRemoteAddr(), request.getServletPath());
-    
-    String cookies = request.getCookies() == null ? "" : request.getCookies().toString();
-    logger.debug("Request from [{}] on [{}] for [{}]. Query for request is: [{}]. Header names are: [{}]. Cookies are: [{}]", 
-        request.getRemoteUser(), 
-        request.getRemoteAddr(), 
-        request.getServletPath(), 
-        request.getQueryString(), 
-        request.getHeaderNames(), 
-        cookies);
+    if (request.getServletPath() != null && !request.getServletPath().equals("/error")) {
+      logger.info("Request from [{}] on [{}] for [{}]", request.getRemoteUser(), request.getRemoteAddr(), request.getServletPath());
+
+      String cookies = request.getCookies() == null ? "" : request.getCookies().toString();
+      logger.debug("Request from [{}] on [{}] for [{}]. Query for request is: [{}]. Header names are: [{}]. Cookies are: [{}]",
+          request.getRemoteUser(), 
+          request.getRemoteAddr(), 
+          request.getServletPath(), 
+          request.getQueryString(), 
+          request.getHeaderNames(), 
+          cookies);
+    }
     return true;
   }
 }
