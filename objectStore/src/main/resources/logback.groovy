@@ -15,7 +15,7 @@ appender("STDOUT", ConsoleAppender) {
 
 appender("FILEOUT", FileAppender) {
   append = false
-  file = "${System.getProperty("app.home")}/logs/objectStore.log"
+  file = "${System.getProperty("app.home", "/tmp")}/logs/objectStore.log"
   encoder(PatternLayoutEncoder) {
     pattern = "%date %level [%thread] %logger{10} [%file:%line] %msg%n"
   }
@@ -26,7 +26,7 @@ appender("FILEOUT", FileAppender) {
 
 appender("DEBUGOUT", FileAppender) {
   append = false
-  file = "${System.getProperty("app.home")}/logs/debug.log"
+  file = "${System.getProperty("app.home", "/tmp")}/logs/debug.log"
   encoder(PatternLayoutEncoder) {
     pattern = "%date %level [%thread] %logger{10} [%file:%line] %msg%n"
   }
@@ -35,8 +35,16 @@ appender("DEBUGOUT", FileAppender) {
   }
 }
 
+appender("REQUESTS", FileAppender) {
+  file = "${System.getProperty("app.home", "/tmp")}/logs/requests.log"
+  encoder(PatternLayoutEncoder) {
+    pattern = "%date %level [%thread] %logger{10} [%file:%line] %msg%n"
+  }
+}
+
 root(DEBUG, ["STDOUT", "FILEOUT", "DEBUGOUT"])
 
+logger("gov.loc.rdc.controllers.UserRequestLoggingInterceptor", DEBUG, ["REQUESTS"])
 //these two are set to ERROR since they output unneeded logging at the info level
 logger("gov.loc.rdc.app.Main", ERROR)
 logger("org.springframework", ERROR)
