@@ -1,5 +1,7 @@
 package gov.loc.rdc.controllers;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +17,7 @@ public class UserRequestLoggingInterceptor extends HandlerInterceptorAdapter {
     if (request.getServletPath() != null && !request.getServletPath().equals("/error")) {
       logger.info("Request from [{}] on [{}] for [{}]", request.getRemoteUser(), request.getRemoteAddr(), request.getServletPath());
 
-      String cookies = request.getCookies() == null ? "" : request.getCookies().toString();
+      String cookies = request.getCookies() == null ? "" : Arrays.toString(request.getCookies());
       logger.debug("Request from [{}] on [{}] for [{}]. Query for request is: [{}]. Header names are: [{}]. Cookies are: [{}]",
           request.getRemoteUser(), 
           request.getRemoteAddr(), 
