@@ -16,13 +16,6 @@ subprojects {
     testLogging.showStandardStreams = true
   }
 
-  jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled true
-    }
-  }
-
   jacocoTestReport.dependsOn test
   build.dependsOn jacocoTestReport
 
