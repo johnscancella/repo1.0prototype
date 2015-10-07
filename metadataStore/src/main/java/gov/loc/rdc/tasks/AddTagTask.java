@@ -1,42 +1,20 @@
 package gov.loc.rdc.tasks;
 
-import gov.loc.rdc.errors.UnsupportedAlgorithmException;
-import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.repositories.MetadataRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class AddTagTask implements Runnable{
-  private static final Logger logger = LoggerFactory.getLogger(FindByTagsTask.class);
-  
-  private final DeferredResult<Boolean> result;
-  private final MetadataRepository repository;
-  private final String algorithm;
-  private final String hash;
-  private final String tag;
-  
-  public AddTagTask(final DeferredResult<Boolean> result, 
-                            final MetadataRepository repository, 
-                            final String algorithm, final String hash,
-                            final String tag){
-    this.result = result;
-    this.repository = repository;
-    this.algorithm = algorithm;
-    this.hash = hash;
-    this.tag = tag;
+public class AddTagTask extends TagTask implements Runnable {
+
+  public AddTagTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String algorithm, final String hash, final String tag) {
+    super(result, repository, algorithm, hash, tag);
   }
-  
+
+  @SuppressWarnings("unchecked")
   @Override
-  public void run() {
-    if(!HashAlgorithm.algorithmSupported(algorithm)){
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      result.setErrorResult(new UnsupportedAlgorithmException("Only sha256 is currently supported for hashing algorithm"));
-    }
-        
+  protected void doTaskWork() {
     logger.debug("Adding tag [{}] to hash [{}]", tag, hash);
     repository.saveTagToHash(tag, hash);
-    result.setResult(true);
+    ((DeferredResult<Boolean>) result).setResult(true);
   }
 }

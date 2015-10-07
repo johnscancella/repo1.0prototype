@@ -99,20 +99,19 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
 
   @Override
   public void saveTagToHash(String tag, String hash) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("hash").is(hash));
-    Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
-    
-    if(metadata == null){
-      metadata = new Metadata(hash);
-    }
-    
+    Metadata metadata = getMetadata(hash);
     metadata.getTags().add(tag);
     mongoTemplate.save(metadata);
   }
 
   @Override
   public void saveKeyValuePairToHash(KeyValuePair<String, String> keyValuePair, String hash) {
+    Metadata metadata = getMetadata(hash);
+    metadata.getKeyValuePairs().add(keyValuePair);
+    mongoTemplate.save(metadata);
+  }
+  
+  protected Metadata getMetadata(String hash){
     Query query = new Query();
     query.addCriteria(Criteria.where("hash").is(hash));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
@@ -121,7 +120,6 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
       metadata = new Metadata(hash);
     }
     
-    metadata.getKeyValuePairs().add(keyValuePair);
-    mongoTemplate.save(metadata);
+    return metadata;
   }
 }
