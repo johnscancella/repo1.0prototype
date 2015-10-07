@@ -5,20 +5,26 @@ import gov.loc.rdc.repositories.MetadataRepository;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class FindByHashTask extends MetadataStoreTask implements Runnable {
-
+public class FindByHashTask extends AbstractMetadataStoreTask implements Runnable {
+  private final DeferredResult<Metadata> result;
+  
   public FindByHashTask(final DeferredResult<Metadata> result, final MetadataRepository repository, final String algorithm, final String hash) {
-    super(result, repository, algorithm, hash);
+    super(repository, algorithm, hash);
+    this.result = result;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void doTaskWork() {
     Metadata data = repository.findByHash(hash);
     if (data == null) {
       data = new Metadata();
     }
-    ((DeferredResult<Metadata>) result).setResult(data);
+    result.setResult(data);
+  }
+
+  @Override
+  protected DeferredResult<?> getResult() {
+    return result;
   }
 
 }

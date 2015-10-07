@@ -5,15 +5,22 @@ import gov.loc.rdc.repositories.MetadataRepository;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class DeleteKeyValuePairTask extends KeyValuePairTask implements Runnable {
+public class DeleteKeyValuePairTask extends AbstractKeyValuePairTask implements Runnable {
+  private final DeferredResult<Boolean> result;
+  
   public DeleteKeyValuePairTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String algorithm, final String hash, final KeyValuePair<String, String> pair) {
-    super(result, repository, algorithm, hash, pair);
+    super(repository, algorithm, hash, pair);
+    this.result = result;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void doTaskWork() {
     repository.deleteKeyValueFromHash(pair, hash);
-    ((DeferredResult<Boolean>) result).setResult(true);
+    result.setResult(true);
+  }
+
+  @Override
+  protected DeferredResult<?> getResult() {
+    return result;
   }
 }

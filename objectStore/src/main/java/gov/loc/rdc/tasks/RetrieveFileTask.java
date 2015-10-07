@@ -2,45 +2,27 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.errors.UnsupportedAlgorithmException;
-import gov.loc.rdc.hash.HashAlgorithm;
 import gov.loc.rdc.hash.HashPathUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
- * responsible for storing a file in the object store and returning the file
- * hash
+ * responsible for getting a file from the object store
  */
-public class RetrieveFileTask implements Runnable, HashPathUtils {
-  private static final Logger logger = LoggerFactory.getLogger(RetrieveFileTask.class);
-
-  private DeferredResult<byte[]> result;
-  private File objectStoreRootDir;
-  String algorithm;
-  private String hash;
+public class RetrieveFileTask extends AbstractFileInfoTask implements Runnable, HashPathUtils {
+  private final DeferredResult<byte[]> result;
 
   public RetrieveFileTask(DeferredResult<byte[]> result, File objectStoreRootDir, String algorithm, String hash) {
+    super(objectStoreRootDir, algorithm, hash);
     this.result = result;
-    this.objectStoreRootDir = objectStoreRootDir;
-    this.algorithm = algorithm;
-    this.hash = hash;
   }
 
   @Override
-  public void run() {
-    if (!HashAlgorithm.algorithmSupported(algorithm)) {
-      logger.info("User tried to get stored file using unsupported hashing algorithm [{}]", algorithm);
-      result.setErrorResult(new UnsupportedAlgorithmException("Only sha256 is currently supported for hashing algorithm"));
-      return;
-    }
-
+  public void doTaskWork() {
     logger.debug("Searching for file with hash [{}].", hash);
     File storedFile = computeStoredLocation(objectStoreRootDir, hash);
 
@@ -58,6 +40,11 @@ public class RetrieveFileTask implements Runnable, HashPathUtils {
       logger.warn("Unable to find stored file [{}]. Returning 404 instead.", storedFile.toURI());
       result.setErrorResult(new ResourceNotFoundException());
     }
+  }
+
+  @Override
+  protected DeferredResult<?> getResult() {
+    return result;
   }
 
 }

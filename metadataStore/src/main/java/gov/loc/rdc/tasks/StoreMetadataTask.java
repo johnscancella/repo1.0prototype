@@ -11,17 +11,18 @@ import java.util.Set;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class StoreMetadataTask extends MetadataStoreTask implements Runnable {
+public class StoreMetadataTask extends AbstractMetadataStoreTask implements Runnable {
   private final Set<String> tags;
   private final String keyValuePairsAsJson;
+  private final DeferredResult<Boolean> result;
 
   public StoreMetadataTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String algorithm, final String hash, final Set<String> tags, final String keyValuePairsAsJson) {
-    super(result, repository, algorithm, hash);
+    super(repository, algorithm, hash);
+    this.result = result;
     this.tags = tags;
     this.keyValuePairsAsJson = keyValuePairsAsJson;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void doTaskWork() {
     try {
@@ -29,12 +30,17 @@ public class StoreMetadataTask extends MetadataStoreTask implements Runnable {
       Metadata data = new Metadata(hash, tags, keyValuePairs);
       logger.debug("Saving metadata [{}]", data);
       repository.save(data);
-      ((DeferredResult<Boolean>) result).setResult(true);
+      result.setResult(true);
     }
     catch (Exception e) {
       logger.error("Failed to store metadata. Perhaps [{}] is not valid JSON?", keyValuePairsAsJson, e);
       result.setErrorResult(new JsonParamParseFailException("Failed to store metadata. Perhaps it is not valid JSON?"));
     }
+  }
+
+  @Override
+  protected DeferredResult<?> getResult() {
+    return result;
   }
 
 }

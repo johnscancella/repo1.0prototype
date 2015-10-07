@@ -2,6 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.Hasher;
+import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
 import gov.loc.rdc.tasks.RetrieveFileTask;
 import gov.loc.rdc.tasks.StoreFileTask;
 
@@ -62,6 +63,16 @@ public class FileStoreController implements HashPathUtils{
     DeferredResult<String> result = new DeferredResult<String>();
     
     StoreFileTask task = new StoreFileTask(result, file, objectStoreRootDir, hasher);
+    threadExecutor.execute(task);
+    
+    return result;
+  }
+  
+  @RequestMapping(value="/fileexists/{algorithm}/{hash}", method={RequestMethod.GET, RequestMethod.POST})
+  public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash){
+    DeferredResult<Boolean> result = new DeferredResult<Boolean>();
+    
+    RetrieveFileExistenceTask task = new RetrieveFileExistenceTask(result, objectStoreRootDir, algorithm, hash);
     threadExecutor.execute(task);
     
     return result;
