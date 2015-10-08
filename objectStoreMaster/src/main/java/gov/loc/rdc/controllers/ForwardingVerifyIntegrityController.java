@@ -14,10 +14,20 @@ import org.springframework.web.client.RestTemplate;
  */
 @RestController
 public class ForwardingVerifyIntegrityController implements VerifyIntegrityControllerApi {
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate;
   
   @Autowired
   private RoundRobinServerController roundRobinServerController;
+  
+  public ForwardingVerifyIntegrityController(){
+    restTemplate = new RestTemplate();
+  }
+  
+  //for unit testing only
+  protected ForwardingVerifyIntegrityController(RestTemplate restTemplate, RoundRobinServerController roundRobinServerController){
+    this.restTemplate = restTemplate;
+    this.roundRobinServerController = roundRobinServerController;
+  }
 
   @Override
   @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})

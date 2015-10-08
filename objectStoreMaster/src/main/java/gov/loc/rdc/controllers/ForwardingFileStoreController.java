@@ -70,4 +70,9 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   protected void setThreadExecutor(ThreadPoolTaskExecutor threadExecutor) {
     this.threadExecutor = threadExecutor;
   }
+
+  //only used in unit test
+  protected void setRoundRobinServerController(RoundRobinServerController roundRobinServerController) {
+    this.roundRobinServerController = roundRobinServerController;
+  }
 }

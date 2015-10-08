@@ -33,14 +33,14 @@ public class RoundRobinServerController {
   }
   
   @RequestMapping(value="/remove/objectstorenode/{serverName}", method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
-  public String removeServer(@PathVariable String serverName){
+  public boolean removeServer(@PathVariable String serverName){
     boolean isSuccessful = serverAddresses.remove(serverName);
     
     if(isSuccessful){
-      return "Successfully removed " + serverName;
+      return true;
     }
     
-    return "Could not remove " + serverName + " cause it could not be found.";
+    return false;
   }
   
   /**
