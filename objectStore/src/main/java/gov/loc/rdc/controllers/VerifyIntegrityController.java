@@ -21,9 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class VerifyIntegrityController {
-  private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityController.class);
-  private static final String VERIFY_INTEGRITY_URL = "/verifyintegrity";
+public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
+  private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityControllerApi.class);
 
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
@@ -31,7 +30,8 @@ public class VerifyIntegrityController {
   @Autowired
   private Hasher hasher;
   
-  @RequestMapping(value=VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
+  @Override
+  @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
   public void restfulVerifyIntegrity(@RequestParam(required=false) String rootDir){
     if(rootDir == null || rootDir.equals("")){
       logger.debug("rootDir not supplied during http request. Defaulting to [{}]", objectStoreRootDir);

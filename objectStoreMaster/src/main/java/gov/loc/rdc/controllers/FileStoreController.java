@@ -1,19 +1,14 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.hash.Hasher;
-import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
-import gov.loc.rdc.tasks.RetrieveFileTask;
-import gov.loc.rdc.tasks.StoreFileTask;
+import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
+import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
+import gov.loc.rdc.tasks.OrderedServerForwardedStoreFileTask;
 
-import java.io.File;
+import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,32 +20,23 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Handles storing and getting files based on their hash.
+ * Handles forwarding storing and getting files based on their hash to the proper slave node.
  */
 @RestController
 public class FileStoreController implements FileStoreControllerApi{
-  private static final Logger logger = LoggerFactory.getLogger(FileStoreController.class);
-  
-  @Autowired
-  private Hasher hasher;
-  
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
   
-  @Value("${rootDir:/tmp}")
-  private File objectStoreRootDir;
-  
-  @PostConstruct
-  public void info(){
-    logger.info("Storing hashed files in [{}] directory", objectStoreRootDir.toURI());
-  }
+  @Autowired
+  private RoundRobinServerController roundRobinServerController;
   
   @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public DeferredResult<byte[]> getFile(@PathVariable String algorithm, @PathVariable String hash){
     DeferredResult<byte[]> result = new DeferredResult<>();
+    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
     
-    RetrieveFileTask task = new RetrieveFileTask(result, objectStoreRootDir, algorithm, hash);
+    OrderedServerForwardedGetFileTask task = new OrderedServerForwardedGetFileTask(roundRobinServerList, result, algorithm, hash);
     threadExecutor.execute(task);
     
     return result;
@@ -60,8 +46,9 @@ public class FileStoreController implements FileStoreControllerApi{
   @RequestMapping(value=RequestMappings.STORE_FILE_URL, method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file){
     DeferredResult<String> result = new DeferredResult<String>();
+    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
     
-    StoreFileTask task = new StoreFileTask(result, file, objectStoreRootDir, hasher);
+    OrderedServerForwardedStoreFileTask task = new OrderedServerForwardedStoreFileTask(roundRobinServerList, result, file);
     threadExecutor.execute(task);
     
     return result;
@@ -71,21 +58,12 @@ public class FileStoreController implements FileStoreControllerApi{
   @RequestMapping(value=RequestMappings.FILE_EXISTS_URL, method={RequestMethod.GET, RequestMethod.POST})
   public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
+    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
     
-    RetrieveFileExistenceTask task = new RetrieveFileExistenceTask(result, objectStoreRootDir, algorithm, hash);
+    OrderedServerForwardedFileExistsTask task = new OrderedServerForwardedFileExistsTask(roundRobinServerList, result, algorithm, hash);
     threadExecutor.execute(task);
     
     return result;
-  }
-
-  //only used in unit test
-  protected void setHasher(Hasher hasher) {
-    this.hasher = hasher;
-  }
-
-  //only used in unit test
-  protected void setObjectStoreRootDir(File objectStoreRootDir) {
-    this.objectStoreRootDir = objectStoreRootDir;
   }
 
   //only used in unit test
