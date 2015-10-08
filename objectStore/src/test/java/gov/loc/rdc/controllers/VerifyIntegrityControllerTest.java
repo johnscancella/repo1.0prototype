@@ -50,32 +50,32 @@ public class VerifyIntegrityControllerTest {
   
   @Test
   public void testRestfulVerifyIntegrityWithSpecifiedStartingDir() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootDir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
-    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootDir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
-    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootDir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootdir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootdir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootdir", testDir.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isOk());
   }
   
   @Test
   public void testRestfulVerifyIntegrityWithBlankStartingDir() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootDir", "")).andExpect(MockMvcResultMatchers.status().isOk());
-    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootDir", "")).andExpect(MockMvcResultMatchers.status().isOk());
-    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootDir", "")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootdir", "")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootdir", "")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootdir", "")).andExpect(MockMvcResultMatchers.status().isOk());
   }
   
   @Test
   public void testRestfulVerifyIntegrityWithBadStartingDir() throws Exception{
     String badStartingDir = "/foo";
-    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootDir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
-    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootDir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
-    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootDir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootdir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootdir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootdir", badStartingDir)).andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
   
   @Test
   public void testRestfulVerifyIntegrityWithFileInsteadOfDir() throws Exception{
     File file = new File(getClass().getClassLoader().getResource("validObjectStore/dir1/b6668cf8c46c7075e18215d922e7812ca082fa6cc34668d00a6c20aee4551fb6").getFile());
-    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootDir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
-    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootDir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
-    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootDir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.get("/verifyintegrity").param("rootdir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.put("/verifyintegrity").param("rootdir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.post("/verifyintegrity").param("rootdir", file.getAbsolutePath())).andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
 }

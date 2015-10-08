@@ -1,7 +1,6 @@
 package gov.loc.rdc.domain;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import org.springframework.core.io.ByteArrayResource;
