@@ -32,18 +32,6 @@ subprojects {
     ruleSets = ["java-basic", "java-braces"]
   }
   
-//https://issues.jenkins-ci.org/browse/JENKINS-9438
-//cause the junit test output isn't updated the build fails, this updates the timestamp
-/*  task jenkinsTest{
-    inputs.files test.outputs.files
-    doLast{
-        def timestamp = System.currentTimeMillis()
-        test.testResultsDir.eachFile { it.lastModified = timestamp }
-    }
-  }
- 
-  build.dependsOn(jenkinsTest)*/
-
   task dump(type: Copy){
     from configurations.runtime
     into "dumpedDependencies"
