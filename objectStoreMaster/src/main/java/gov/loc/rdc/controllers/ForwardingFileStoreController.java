@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Handles forwarding storing and getting files based on their hash to the proper slave node.
  */
 @RestController
-public class FileStoreController implements FileStoreControllerApi{
+public class ForwardingFileStoreController implements FileStoreControllerApi{
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
   

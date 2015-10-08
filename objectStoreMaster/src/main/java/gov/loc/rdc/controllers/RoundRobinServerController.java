@@ -19,6 +19,8 @@ public class RoundRobinServerController {
   
   private int startingIndex = 0;
   
+  //TODO add a healthcheck/heartbeat to remove down servers
+  
   @RequestMapping(value="/list/objectstorenodes", method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
   public List<String> listServers(){
     return serverAddresses;

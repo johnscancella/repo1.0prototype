@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Responsible for continuously and programmically verifying that files haven't become corrupt. 
+ */
 @RestController
 public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityControllerApi.class);
@@ -32,7 +35,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   
   @Override
   @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
-  public void restfulVerifyIntegrity(@RequestParam(required=false) String rootDir){
+  public void restfulVerifyIntegrity(@RequestParam(value="rootdir", required=false) String rootDir){
     if(rootDir == null || rootDir.equals("")){
       logger.debug("rootDir not supplied during http request. Defaulting to [{}]", objectStoreRootDir);
       scan(objectStoreRootDir);
@@ -41,7 +44,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
     
     File startingDir = new File(rootDir);
     if(startingDir.exists() && startingDir.isDirectory()){
-      scan(objectStoreRootDir);
+      scan(startingDir);
     }
     else{
       throw new MissingParametersException("[" + rootDir + "] is not a directory. Please supply a starting directory for integrity verification");
@@ -54,16 +57,18 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   }
   
   protected void scan(File StartingDir){
-    logger.info("Starting integrity verification on [{}] directory", StartingDir);
-    try {
-      Files.walk(StartingDir.toPath(), FileVisitOption.FOLLOW_LINKS).filter(path -> path.toFile().isFile()).forEach((path) -> visitFile(path));
+    if(StartingDir.exists()){
+      logger.info("Starting integrity verification on [{}] directory", StartingDir);
+      try {
+        Files.walk(StartingDir.toPath(), FileVisitOption.FOLLOW_LINKS).filter(path -> path.toFile().isFile()).forEach((path) -> visitFile(path));
+      }
+      catch (Exception e) {
+        logger.error("Failed to walk tree", e);
+        throw new InternalErrorException(e);
+        // TODO some other notification?
+      }
+      logger.info("Finished integrity verification on [{}] directory", StartingDir);
     }
-    catch (Exception e) {
-      logger.error("Failed to walk tree", e);
-      throw new InternalErrorException(e);
-      // TODO some other notification?
-    }
-    logger.info("Finished integrity verification on [{}] directory", StartingDir);
   }
 
   protected void visitFile(Path path) {
