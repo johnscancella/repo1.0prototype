@@ -26,10 +26,9 @@ public class RoundRobinServerController {
     return serverAddresses;
   }
   
-  @RequestMapping(value="/add/objectstorenode/{serverName}", method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
-  public String addServer(@PathVariable String serverName){
-    serverAddresses.add(serverName);
-    return "Successfully added " + serverName;
+  @RequestMapping(value=RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL, method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
+  public boolean addServer(@PathVariable String serverName){
+    return serverAddresses.add(serverName);
   }
   
   @RequestMapping(value="/remove/objectstorenode/{serverName}", method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
