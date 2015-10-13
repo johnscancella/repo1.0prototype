@@ -67,13 +67,13 @@ public class RoundRobinServerControllerTest extends Assert {
     String returnMessage = "Successfully added ";
     
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(url + "foo")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(returnMessage + "foo", result.getResponse().getContentAsString());
+    assertEquals("true", result.getResponse().getContentAsString());
     
     result = mockMvc.perform(MockMvcRequestBuilders.put(url + "bar")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(returnMessage + "bar", result.getResponse().getContentAsString());
+    assertEquals("true", result.getResponse().getContentAsString());
     
     result = mockMvc.perform(MockMvcRequestBuilders.post(url + "ham")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(returnMessage + "ham", result.getResponse().getContentAsString());
+    assertEquals("true", result.getResponse().getContentAsString());
   }
   
   @Test
