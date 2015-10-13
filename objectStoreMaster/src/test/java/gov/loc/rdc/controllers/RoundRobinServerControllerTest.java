@@ -64,7 +64,6 @@ public class RoundRobinServerControllerTest extends Assert {
   @Test
   public void testAddServer() throws Exception{
     String url = "/add/objectstorenode/";
-    String returnMessage = "Successfully added ";
     
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(url + "foo")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals("true", result.getResponse().getContentAsString());
