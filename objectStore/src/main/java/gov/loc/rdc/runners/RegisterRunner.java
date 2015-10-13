@@ -1,4 +1,6 @@
-package gov.loc.rdc.controllers;
+package gov.loc.rdc.runners;
+
+import gov.loc.rdc.controllers.RequestMappings;
 
 import java.net.InetAddress;
 
@@ -13,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
  * Responsible for registering with the master node after starting up
  */
 @Component
-public class RegisterController implements CommandLineRunner{
-  private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
+public class RegisterRunner implements CommandLineRunner{
+  private static final Logger logger = LoggerFactory.getLogger(RegisterRunner.class);
   
   @Value("${is_cluster_enabled:true}")
   private boolean isClusterEnabled;
@@ -25,6 +27,9 @@ public class RegisterController implements CommandLineRunner{
   //default to 10 minutes
   @Value("${reconnect_period_in_miliseconds:600000}")
   private Integer retryPeriod;
+  
+  @Value("$url_to_register")
+  private String myUrl;
   
   private final RestTemplate restTemplate = new RestTemplate();
   
@@ -43,9 +48,11 @@ public class RegisterController implements CommandLineRunner{
   }
   
   protected void register(String hostname){
+    String requestUrl = hostname + RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL;
     while(true){
       try{
-          boolean isRegisteredWithMaster = restTemplate.getForObject(RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL, Boolean.class, hostname);
+          
+          boolean isRegisteredWithMaster = restTemplate.getForObject(requestUrl, Boolean.class, myUrl);
           if(isRegisteredWithMaster){
             return;
           }

@@ -51,6 +51,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
     }
   }
 
+  //default to once a month
   @Scheduled(cron = "${integrity-wait-cron:0 0 0 * * *}")
   public void verifyIntegrity() {
     scan(objectStoreRootDir);

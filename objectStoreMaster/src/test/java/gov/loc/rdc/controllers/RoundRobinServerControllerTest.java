@@ -30,6 +30,22 @@ public class RoundRobinServerControllerTest extends Assert {
   }
   
   @Test
+  public void testSetHeartbeatTimeoutSuccessfully() throws Exception{
+    String url = "/set/heartbeattimeout/minutes/";
+    mockMvc.perform(MockMvcRequestBuilders.get(url + "1")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.post(url + "2")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.put(url + "3")).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+  
+  @Test
+  public void testSetHeartbeatTimeoutThrowsErrorWithBadRequest() throws Exception{
+    String url = "/set/heartbeattimeout/minutes/";
+    mockMvc.perform(MockMvcRequestBuilders.put(url + "foo")).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.post(url + "bar")).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    mockMvc.perform(MockMvcRequestBuilders.get(url + "ham")).andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+  
+  @Test
   public void testListServers() throws Exception{
     ObjectMapper objectMapper = new ObjectMapper();
     String serversAsJsonString = objectMapper.writeValueAsString(servers);
