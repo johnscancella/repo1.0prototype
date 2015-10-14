@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class RoundRobinServerController {
   private static final Logger logger = LoggerFactory.getLogger(RoundRobinServerController.class);
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate;
   
   @Value("#{'${slave_addresses}'.split(',')}")
   private List<String> serverAddresses; //TODO convert to a set instead of list?
@@ -35,6 +35,16 @@ public class RoundRobinServerController {
   
   private Map<String, LocalDateTime> heartbeatMap = new HashMap<>();
   private int startingIndex = 0;
+  
+  public RoundRobinServerController(){
+    this.restTemplate = new RestTemplate();
+  }
+  
+  public RoundRobinServerController(RestTemplate restTemplate, List<String> serverAddresses, Long heartBeatTimeoutInMinutes){
+    this.restTemplate = restTemplate;
+    this.serverAddresses = serverAddresses;
+    this.heartBeatTimeoutInMinutes = heartBeatTimeoutInMinutes;
+  }
   
   @PostConstruct
   private void init(){
@@ -50,7 +60,7 @@ public class RoundRobinServerController {
     logger.info("CRON - Checking to make sure servers are still alive.");
     for(String serverAddress : serverAddresses){
       pingServer(serverAddress);
-      removeServerIfStale(serverAddress);
+      removeServerIfStale(serverAddress, LocalDateTime.now());
     }
   }
   
@@ -63,11 +73,10 @@ public class RoundRobinServerController {
     }
   }
   
-  protected void removeServerIfStale(String server){
-    LocalDateTime now = LocalDateTime.now();
+  protected void removeServerIfStale(String server, LocalDateTime compareTo){
     LocalDateTime lastHeartbeat = heartbeatMap.get(server);
     
-    if(lastHeartbeat.plusMinutes(heartBeatTimeoutInMinutes).isBefore(now)){
+    if(lastHeartbeat.plusMinutes(heartBeatTimeoutInMinutes).isBefore(compareTo)){
       logger.warn("Server [{}] last heartbeat was [{}] which is past the timeout of [{}] minutes. Removing server from available list.",
           server, lastHeartbeat, heartBeatTimeoutInMinutes);
       serverAddresses.remove(server);
@@ -140,8 +149,8 @@ public class RoundRobinServerController {
     return integer;
   }
 
-  //only used in unit testing
-  protected void setServerAddresses(List<String> serverAddresses) {
-    this.serverAddresses = serverAddresses;
+  //for unit tests only
+  protected Map<String, LocalDateTime> getHeartbeatMap() {
+    return heartbeatMap;
   }
 }

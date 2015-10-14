@@ -12,6 +12,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,13 @@ public class OrderedServerForwardedStoreFileTask extends OrderServerForwardedTas
   
   public OrderedServerForwardedStoreFileTask(List<String> serversToVisit, DeferredResult<String> result, MultipartFile file){
     super(serversToVisit);
+    this.result = result;
+    this.file = file;
+  }
+  
+  //for unit testing
+  protected OrderedServerForwardedStoreFileTask(List<String> serversToVisit, DeferredResult<String> result, MultipartFile file, RestTemplate restTemplate){
+    super(serversToVisit, restTemplate);
     this.result = result;
     this.file = file;
   }

@@ -1,5 +1,6 @@
 package gov.loc.rdc.controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,26 +8,61 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RoundRobinServerControllerTest extends Assert {
-
+  private static final List<String> MOCK_SERVER_LIST = Arrays.asList("a", "b", "c", "d", "e", "f");
   private MockMvc mockMvc;
   private RoundRobinServerController sut;
   private List<String> servers;
+  
+  @Mock
+  private RestTemplate mockRestTemplate;
 
   @Before
   public void setup() {
-    sut = new RoundRobinServerController();
-    servers = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f"));
-    sut.setServerAddresses(servers);
+    servers = new ArrayList<>(MOCK_SERVER_LIST);
+    sut = new RoundRobinServerController(mockRestTemplate, servers, 60L);
     mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+  }
+  
+  @Test
+  public void testServersStillAvailable(){
+    Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(true);
+    sut.checkServersStillAvailable();
+  }
+  
+  @Test
+  public void testPingServer(){
+    Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(true);
+    sut.pingServer(MOCK_SERVER_LIST.get(0));
+  }
+  
+  @Test 
+  public void testRemoveServerIfStale(){
+    LocalDateTime now = LocalDateTime.now();
+    sut.getHeartbeatMap().put(MOCK_SERVER_LIST.get(0), now);
+    sut.getHeartbeatMap().put(MOCK_SERVER_LIST.get(1), now.minusHours(1)); //test edge case
+    sut.getHeartbeatMap().put(MOCK_SERVER_LIST.get(2), now.minusHours(2));
+    
+    sut.removeServerIfStale(MOCK_SERVER_LIST.get(0), now);
+    assertTrue(sut.getAvailableServers().contains(MOCK_SERVER_LIST.get(0)));
+    sut.removeServerIfStale(MOCK_SERVER_LIST.get(1), now);
+    assertTrue(sut.getAvailableServers().contains(MOCK_SERVER_LIST.get(1)));
+    sut.removeServerIfStale(MOCK_SERVER_LIST.get(2), now);
+    assertFalse(sut.getAvailableServers().contains(MOCK_SERVER_LIST.get(2)));
   }
   
   @Test

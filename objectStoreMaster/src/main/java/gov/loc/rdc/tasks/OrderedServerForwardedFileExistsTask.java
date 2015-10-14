@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 
 public class OrderedServerForwardedFileExistsTask extends OrderServerForwardedTask implements Runnable{
@@ -15,6 +16,14 @@ public class OrderedServerForwardedFileExistsTask extends OrderServerForwardedTa
   
   public OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String algorithm, String hash){
     super(serversToVisit);
+    this.result = result;
+    this.algorithm = algorithm;
+    this.hash = hash;
+  }
+  
+  //for unit testing
+  protected OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String algorithm, String hash, RestTemplate restTemplate){
+    super(serversToVisit, restTemplate);
     this.result = result;
     this.algorithm = algorithm;
     this.hash = hash;
