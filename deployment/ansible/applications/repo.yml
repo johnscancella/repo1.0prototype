@@ -1,0 +1,5 @@
+---
+- include: mongoDb.yml
+- include: metadataStore.yml
+- include: objectStoreMaster.yml
+- include: objectStore.yml

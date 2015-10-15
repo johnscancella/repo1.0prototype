@@ -1,0 +1,2 @@
+---
+- fail: msg="Windows is currently not supported for deployment metadataStore"

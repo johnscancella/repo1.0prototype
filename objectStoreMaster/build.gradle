@@ -31,7 +31,7 @@ ospackage {
   packager "Library of Congress"
   buildHost InetAddress.localHost.hostName
   
-  into '/opt/loc-rdc/objectStore'
+  into '/opt/loc-rdc/objectStoreMaster'
 
   requires("jre-1.8.0", "", GREATER | EQUAL)
 

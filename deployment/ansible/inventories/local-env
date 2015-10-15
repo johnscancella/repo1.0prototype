@@ -1,0 +1,19 @@
+# inventory file for ansible. Inventory files define resources to which software/config is deployed to. 
+#In this case we are deploying everything locally, but still want to define groups which are used by the playbooks
+
+#the "all" group is automatically created and includes all servers(as you would imagine).
+[all:vars]
+install_version=latest
+artifactory_url=http://140.147.214.66:8081/artifactory/repo
+
+[objectStore-servers]
+localhost ansible_connection=local
+
+[objectStoreMaster-servers]
+localhost ansible_connection=local
+
+[metadataStore-servers]
+localhost ansible_connection=local
+
+[mongo-db-servers]
+localhost ansible_connection=local

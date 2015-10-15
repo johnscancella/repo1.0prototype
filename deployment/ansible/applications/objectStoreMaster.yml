@@ -1,0 +1,14 @@
+---
+- hosts: objectStoreMaster-servers
+  tasks:
+  - include: tasks/objectStoreMaster/objectStoreMaster-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/objectStoreMaster/objectStoreMaster-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/objectStoreMaster/objectStoreMaster-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/objectStoreMaster/objectStoreMaster-Mac.yml
+#    when: ansible_os_family == "Darwin"

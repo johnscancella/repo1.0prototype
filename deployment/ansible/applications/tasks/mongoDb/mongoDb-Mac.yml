@@ -1,0 +1,11 @@
+---
+- name: Install MongoDb
+  homebrew: name=mongodb update_homebrew=yes
+  
+#TODO add /usr/local/etc/mongod.conf?
+
+- name: Create database data dir
+  file: state=directory path=/data/db
+
+- name: Start MongoDb and persist across reboots
+  service: name=mongod state=restarted enabled=yes

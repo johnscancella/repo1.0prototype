@@ -1,0 +1,13 @@
+---
+- name: download metadataStore from artifact repo
+  maven_artifact: repository_url={{ artifactory_url }} group_id=gov.loc artifact_id=metadataStore version={{ install_version }} extension=rpm dest=/tmp
+  register: artifact
+
+- name: install metadataStore from rpm
+  yum: name={{ artifact.dest }} state=present
+
+- name: delete tmp rpm file
+  file: path={{ artifact.dest }}  state=absent
+
+- name: run metadataStore
+  shell: /opt/loc-rdc/metadataStore/bin/metadataStore

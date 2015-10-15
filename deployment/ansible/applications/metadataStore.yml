@@ -1,0 +1,14 @@
+---
+- hosts: metadataStore-servers
+  tasks:
+  - include: tasks/metadataStore/metadataStore-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/metadataStore/metadataStore-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/metadataStore/metadataStore-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/metadataStore/metadataStore-Mac.yml
+#    when: ansible_os_family == "Darwin"

@@ -1,0 +1,11 @@
+---
+- name: Add MongoDb yum repository
+  copy: dest=/etc/yum.repos.d/mongodb-org-3.0.repo src=mongodb-org-3.0.repo
+  
+- name: Install MongoDb
+  yum: name=mongodb-org update_cache=yes
+  
+#TODO add /etc/mongod.conf?
+
+- name: Start MongoDb and persist across restarts
+  service: name=mongod state=restarted enabled=yes

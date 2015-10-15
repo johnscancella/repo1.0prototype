@@ -1,0 +1,13 @@
+---
+- name: download objectStore from artifact repo
+  maven_artifact: repository_url={{ artifactory_url }} group_id=gov.loc artifact_id=objectStore version={{ install_version }} extension=rpm dest=/tmp
+  register: artifact
+
+- name: install objectStore from rpm
+  yum: name={{ artifact.dest }} state=present
+
+- name: delete tmp rpm file
+  file: path={{ artifact.dest }}  state=absent
+
+  - name: run metadataStore
+  shell: /opt/loc-rdc/objectStore/bin/objectStore

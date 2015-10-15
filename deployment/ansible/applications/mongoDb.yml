@@ -1,0 +1,14 @@
+---
+- hosts: mongo-db-servers
+  tasks:
+  - include: tasks/mongoDb/mongoDb-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/mongoDb/mongoDb-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/mongoDb/mongoDb-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/mongoDb/mongoDb-Mac.yml
+#    when: ansible_os_family == "Darwin"
