@@ -13,7 +13,12 @@ dependencies {
     project(':objectStoreCore'),
     'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
     'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
-    'org.codehaus.groovy:groovy-all:2.4.0'
+    'org.codehaus.groovy:groovy-all:2.4.0',
+    'org.apache.ant:ant:1.9.6',
+    'org.apache.ant:ant-launcher:1.9.6',
+    'org.apache.ant:ant-jsch:1.9.6',
+    'com.jcraft:jsch:0.1.53'
+    
 
     testCompile 'junit:junit:4.12',
     'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'

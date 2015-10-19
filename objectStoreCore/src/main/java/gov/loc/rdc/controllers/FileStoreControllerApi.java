@@ -14,4 +14,6 @@ public interface FileStoreControllerApi{
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file);
   
   public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash);
+  
+  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl);
 }

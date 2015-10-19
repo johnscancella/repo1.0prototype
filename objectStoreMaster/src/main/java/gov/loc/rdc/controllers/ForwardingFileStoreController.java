@@ -2,6 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
+import gov.loc.rdc.tasks.OrderedServerForwardedScpFileTransferTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedStoreFileTask;
 
 import java.util.List;
@@ -29,6 +30,18 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   
   @Autowired
   private RoundRobinServerController roundRobinServerController;
+  
+  @Override
+  @RequestMapping(value=RequestMappings.SCP_FILE, method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.PUT})
+  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl){
+    DeferredResult<Boolean> result = new DeferredResult<Boolean>();
+    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
+    
+    OrderedServerForwardedScpFileTransferTask task = new OrderedServerForwardedScpFileTransferTask(roundRobinServerList, result, toUrl, filePath);
+    threadExecutor.execute(task);
+    
+    return result;
+  }
   
   @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)

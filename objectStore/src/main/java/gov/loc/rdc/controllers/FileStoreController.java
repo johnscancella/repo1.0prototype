@@ -3,6 +3,7 @@ package gov.loc.rdc.controllers;
 import gov.loc.rdc.hash.Hasher;
 import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
 import gov.loc.rdc.tasks.RetrieveFileTask;
+import gov.loc.rdc.tasks.ScpFileTransferTask;
 import gov.loc.rdc.tasks.StoreFileTask;
 
 import java.io.File;
@@ -37,12 +38,26 @@ public class FileStoreController implements FileStoreControllerApi{
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
   
-  @Value("${rootDir:/tmp}")
+  @Value("${root_dir:/tmp}")
   private File objectStoreRootDir;
+  
+  @Value("${key_path:~/.ssh/id_rsa}")
+  private String keyPath;
   
   @PostConstruct
   public void info(){
     logger.info("Storing hashed files in [{}] directory", objectStoreRootDir.toURI());
+  }
+  
+  @Override
+  @RequestMapping(value=RequestMappings.SCP_FILE, method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.PUT})
+  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl){
+    DeferredResult<Boolean> result = new DeferredResult<Boolean>();
+    
+    ScpFileTransferTask task = new ScpFileTransferTask(result, toUrl, filePath, keyPath);
+    threadExecutor.execute(task);
+    
+    return result;
   }
   
   @Override
@@ -91,5 +106,10 @@ public class FileStoreController implements FileStoreControllerApi{
   //only used in unit test
   protected void setThreadExecutor(ThreadPoolTaskExecutor threadExecutor) {
     this.threadExecutor = threadExecutor;
+  }
+
+  //only used in unit test
+  protected void setKeyPath(String keyPath) {
+    this.keyPath = keyPath;
   }
 }

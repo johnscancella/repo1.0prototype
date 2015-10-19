@@ -19,10 +19,10 @@ public class StoreFileTask implements Runnable, HashPathUtils{
   private static final Logger logger = LoggerFactory.getLogger(StoreFileTask.class);
   private static final String NO_HASH = "Hash was not computed.";
   
-  private DeferredResult<String> result;
-  private MultipartFile file;
-  private File objectStoreRootDir;
-  private Hasher hasher;
+  private final DeferredResult<String> result;
+  private final MultipartFile file;
+  private final File objectStoreRootDir;
+  private final Hasher hasher;
   
   public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir, Hasher hasher) {
     this.result = result;
