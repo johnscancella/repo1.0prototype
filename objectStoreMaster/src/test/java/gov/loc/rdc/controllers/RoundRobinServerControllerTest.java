@@ -39,7 +39,14 @@ public class RoundRobinServerControllerTest extends Assert {
   }
   
   @Test
+  public void testInit(){
+    sut.init();
+    assertFalse(sut.getHeartbeatMap().isEmpty());
+  }
+  
+  @Test
   public void testServersStillAvailable(){
+    sut = new RoundRobinServerController(mockRestTemplate, servers, 60L);
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(true);
     sut.checkServersStillAvailable();
   }

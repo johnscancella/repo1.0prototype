@@ -47,8 +47,9 @@ public class RoundRobinServerController {
   }
   
   @PostConstruct
-  private void init(){
+  public final void init(){
     LocalDateTime now = LocalDateTime.now();
+    logger.debug("Initializing servers last heartbeat to [{}].", now);
     for(String serverAddress : serverAddresses){
       heartbeatMap.put(serverAddress, now);
     }
