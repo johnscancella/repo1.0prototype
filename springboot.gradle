@@ -7,10 +7,10 @@ if(project.version == "unspecified"){
   applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
 }
 
-startScripts{
-  doLast{
-    unixScript.text = tweakRunScript(unixScript, mainClassName, ' --spring.config.location=file:$APP_HOME/config/application.properties', 'DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS \\"-Dapp.home=$APP_HOME\\""')
-  }
+//use our own custom scripts instead of the default ones.
+startScripts {
+  unixStartScriptGenerator.template = resources.text.fromFile(project.rootDir.path + '/customUnixStartScript.txt')
+  windowsStartScriptGenerator.template = resources.text.fromFile(project.rootDir.path + '/customWindowsStartScript.txt')
 }
 
 distributions {
@@ -21,20 +21,4 @@ distributions {
         }
       }
   }
-}
-
-public String tweakRunScript(File scriptFile, String clazz, String flagToAdd, String applicationOpts){
-  StringBuilder sb = new StringBuilder()
-  scriptFile.text.eachLine { String line ->
-    if(line.contains(clazz)){
-      sb.append(line).append(flagToAdd).append("\n")
-    }else if (line.matches("(set )?APP_HOME.*")){
-      //add the application specfic options AFTER APP_HOME is set, so we can reference it
-      sb.append(line).append("\n").append(applicationOpts).append("\n")
-    }else{
-      sb.append(line).append("\n")
-    }
-  }
-  
-  return sb.toString()
 }
