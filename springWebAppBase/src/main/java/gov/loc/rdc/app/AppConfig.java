@@ -18,13 +18,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class AppConfig extends WebMvcConfigurerAdapter{
 private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
   
-  @Value("${core-pool-size:5}")
+  @Value("${core_pool_size:5}")
   private int corePoolSize;
   
-  @Value("${max-pool-size:100}")
+  @Value("${max_pool_size:100}")
   private int maxPoolSize;
   
-  @Value("${wait-for-tasks:false}")
+  @Value("${wait_for_tasks:false}")
   private boolean waitForTasks;
 
   @Bean
