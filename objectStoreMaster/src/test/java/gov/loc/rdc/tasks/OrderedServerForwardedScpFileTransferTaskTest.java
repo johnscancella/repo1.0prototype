@@ -29,7 +29,7 @@ public class OrderedServerForwardedScpFileTransferTaskTest extends Assert {
   }
   
   @Test
-  public void testScoFails(){
+  public void testScpFails(){
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(false);
     DeferredResult<Boolean> result = new DeferredResult<>();
     OrderedServerForwardedScpFileTransferTask sut = new 
