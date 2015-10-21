@@ -29,7 +29,6 @@ ospackage {
   license "This software is in the Public Domain."
   url "https://github.com/loc-rdc/repo1.0prototype"
   vendor "Library of Congress"
-  packager "Library of Congress"
   buildHost InetAddress.localHost.hostName
   
   into '/opt/loc-rdc/metadataStore'
