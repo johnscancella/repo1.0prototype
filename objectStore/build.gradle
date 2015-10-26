@@ -39,7 +39,10 @@ ospackage {
 
   requires("jre-1.8.0", "", GREATER | EQUAL)
 
-  from (startScripts) { into "bin" }
+  from (startScripts) { 
+    into "bin" 
+    exclude "*.bat"
+  }
   from (configurations.runtime) { into "lib" }
   from (jar) { into "lib" }
   from ("application.properties") { into "config" }
