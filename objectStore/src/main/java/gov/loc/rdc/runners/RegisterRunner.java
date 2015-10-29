@@ -32,7 +32,6 @@ public class RegisterRunner implements CommandLineRunner{
   
   @Override
   public void run(String... args) throws Exception {
-    logger.info("Cluster mode is enabled. Registering with master objectStore node [{}].", masterNodeUrl);
     InetAddress localMachine = InetAddress.getLocalHost();
     register(localMachine.getHostName());
   }
