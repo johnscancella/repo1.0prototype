@@ -3,7 +3,6 @@ package gov.loc.rdc.controllers;
 import gov.loc.rdc.hash.Hasher;
 import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
 import gov.loc.rdc.tasks.RetrieveFileTask;
-import gov.loc.rdc.tasks.ScpFileTransferTask;
 import gov.loc.rdc.tasks.StoreFileTask;
 
 import java.io.File;
@@ -50,22 +49,11 @@ public class FileStoreController implements FileStoreControllerApi{
   }
   
   @Override
-  @RequestMapping(value=RequestMappings.SCP_FILE, method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.PUT})
-  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl){
-    DeferredResult<Boolean> result = new DeferredResult<Boolean>();
-    
-    ScpFileTransferTask task = new ScpFileTransferTask(result, toUrl, filePath, keyPath);
-    threadExecutor.execute(task);
-    
-    return result;
-  }
-  
-  @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public DeferredResult<byte[]> getFile(@PathVariable String algorithm, @PathVariable String hash){
+  public DeferredResult<byte[]> getFile(@PathVariable String hash){
     DeferredResult<byte[]> result = new DeferredResult<>();
     
-    RetrieveFileTask task = new RetrieveFileTask(result, objectStoreRootDir, algorithm, hash);
+    RetrieveFileTask task = new RetrieveFileTask(result, objectStoreRootDir, hash);
     threadExecutor.execute(task);
     
     return result;
@@ -84,10 +72,10 @@ public class FileStoreController implements FileStoreControllerApi{
   
   @Override
   @RequestMapping(value=RequestMappings.FILE_EXISTS_URL, method={RequestMethod.GET, RequestMethod.POST})
-  public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash){
+  public DeferredResult<Boolean> fileExists(@PathVariable String hash){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
     
-    RetrieveFileExistenceTask task = new RetrieveFileExistenceTask(result, objectStoreRootDir, algorithm, hash);
+    RetrieveFileExistenceTask task = new RetrieveFileExistenceTask(result, objectStoreRootDir, hash);
     threadExecutor.execute(task);
     
     return result;

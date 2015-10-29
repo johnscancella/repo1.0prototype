@@ -9,11 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
  * Handles storing and getting files based on their hash.
  */
 public interface FileStoreControllerApi{
-  public DeferredResult<byte[]> getFile(@PathVariable String algorithm, @PathVariable String hash);
+  public DeferredResult<byte[]> getFile(@PathVariable String hash);
   
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file);
   
-  public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash);
-  
-  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl);
+  public DeferredResult<Boolean> fileExists(@PathVariable String hash);
 }

@@ -38,7 +38,7 @@ public class ForwardingFileStoreControllerTest extends Assert {
   
   @Test
   public void testGetFile() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/SHA-256/foo")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo")).andExpect(MockMvcResultMatchers.status().isOk());
     Mockito.verify(mockRoundRobinServerController).getAvailableServers();
     Mockito.verify(mockThreadPoolTaskExecutor).execute(Mockito.any(Runnable.class));
   }
@@ -56,7 +56,7 @@ public class ForwardingFileStoreControllerTest extends Assert {
   
   @Test
   public void testFileExists() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/SHA-256/foo")).andExpect(MockMvcResultMatchers.status().isOk());
+    mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/foo")).andExpect(MockMvcResultMatchers.status().isOk());
     Mockito.verify(mockRoundRobinServerController).getAvailableServers();
     Mockito.verify(mockThreadPoolTaskExecutor).execute(Mockito.any(Runnable.class));
   }

@@ -16,8 +16,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class RetrieveFileTask extends AbstractFileInfoTask implements Runnable, HashPathUtils {
   private final DeferredResult<byte[]> result;
 
-  public RetrieveFileTask(DeferredResult<byte[]> result, File objectStoreRootDir, String algorithm, String hash) {
-    super(objectStoreRootDir, algorithm, hash);
+  public RetrieveFileTask(DeferredResult<byte[]> result, File objectStoreRootDir, String hash) {
+    super(objectStoreRootDir, hash);
     this.result = result;
   }
 

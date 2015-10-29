@@ -11,21 +11,18 @@ public class OrderedServerForwardedFileExistsTask extends OrderServerForwardedTa
   private static final Logger logger = LoggerFactory.getLogger(OrderedServerForwardedFileExistsTask.class);
   
   private final DeferredResult<Boolean> result;
-  private final String algorithm;
   private final String hash;
   
-  public OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String algorithm, String hash){
+  public OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String hash){
     super(serversToVisit);
     this.result = result;
-    this.algorithm = algorithm;
     this.hash = hash;
   }
   
   //for unit testing
-  protected OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String algorithm, String hash, RestTemplate restTemplate){
+  protected OrderedServerForwardedFileExistsTask(List<String> serversToVisit, DeferredResult<Boolean> result, String hash, RestTemplate restTemplate){
     super(serversToVisit, restTemplate);
     this.result = result;
-    this.algorithm = algorithm;
     this.hash = hash;
   }
 
@@ -60,7 +57,7 @@ public class OrderedServerForwardedFileExistsTask extends OrderServerForwardedTa
   
   protected String createForwardUrl(String server){
     StringBuilder sb = new StringBuilder();
-    sb.append(server).append("/fileexists/").append(algorithm).append('/').append(hash);
+    sb.append(server).append("/fileexists/").append(hash);
     
     return sb.toString();
   }

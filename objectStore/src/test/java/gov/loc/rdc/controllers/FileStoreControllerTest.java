@@ -2,7 +2,6 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.errors.UnsupportedAlgorithmException;
 import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
@@ -44,7 +43,6 @@ public class FileStoreControllerTest extends Assert {
     fileStoreController.setHasher(mockHasher);
     fileStoreController.setObjectStoreRootDir(folder.newFolder());
     fileStoreController.setThreadExecutor(new MockThreadpool());
-    fileStoreController.setKeyPath("~/.ssh/id_rsa");
     this.mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
   }
 
@@ -67,16 +65,9 @@ public class FileStoreControllerTest extends Assert {
 
   @Test
   public void testGettingNonexistingFile() throws Exception {
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     assertEquals(ResourceNotFoundException.class, result.getAsyncResult().getClass());
-  }
-
-  @Test
-  public void testBadAlgorithm() throws Exception {
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/foo/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
-        .andReturn();
-    assertEquals(UnsupportedAlgorithmException.class, result.getAsyncResult().getClass());
   }
 
   @Test
@@ -108,7 +99,7 @@ public class FileStoreControllerTest extends Assert {
   public void testGettingExistingFile() throws Exception {
     URL url = getClass().getClassLoader().getResource("testFile.txt");
     storeData();
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/sha256/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     assertArrayEquals(Files.readAllBytes(Paths.get(url.toURI())), (byte[]) result.getAsyncResult());
   }
@@ -143,21 +134,9 @@ public class FileStoreControllerTest extends Assert {
   @Test
   public void testIfFileExists() throws Exception{
     storeData();
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/sha256/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     assertEquals(true, result.getAsyncResult());
-  }
-  
-  @Test
-  public void testScp() throws Exception {
-    File transferFolder = folder.newFolder("transfer");
-    String testFile = getClass().getClassLoader().getResource("testFile.txt").getFile();
-    String toUrl = "localhost:" + transferFolder.getAbsolutePath();
-    
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/scp").
-        param("filepath", testFile).param("tourl", toUrl)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(true, result.getAsyncResult());
-    assertEquals(1, transferFolder.list().length);
   }
 
   private static class MockThreadpool extends ThreadPoolTaskExecutor {

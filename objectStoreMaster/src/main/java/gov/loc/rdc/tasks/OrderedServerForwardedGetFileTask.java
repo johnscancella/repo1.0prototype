@@ -12,21 +12,18 @@ public class OrderedServerForwardedGetFileTask extends OrderServerForwardedTask 
   private static final Logger logger = LoggerFactory.getLogger(OrderedServerForwardedGetFileTask.class);
   
   private final DeferredResult<byte[]> result;
-  private final String algorithm;
   private final String hash;
   
-  public OrderedServerForwardedGetFileTask(List<String> serversToVisit, DeferredResult<byte[]> result, String algorithm, String hash){
+  public OrderedServerForwardedGetFileTask(List<String> serversToVisit, DeferredResult<byte[]> result, String hash){
     super(serversToVisit);
     this.result = result;
-    this.algorithm = algorithm;
     this.hash = hash;
   }
   
   //for unit testing
-  protected OrderedServerForwardedGetFileTask(List<String> serversToVisit, DeferredResult<byte[]> result, String algorithm, String hash, RestTemplate restTemplate){
+  protected OrderedServerForwardedGetFileTask(List<String> serversToVisit, DeferredResult<byte[]> result, String hash, RestTemplate restTemplate){
     super(serversToVisit, restTemplate);
     this.result = result;
-    this.algorithm = algorithm;
     this.hash = hash;
   }
 
@@ -53,7 +50,7 @@ public class OrderedServerForwardedGetFileTask extends OrderServerForwardedTask 
   
   protected String createForwardUrl(String server){
     StringBuilder sb = new StringBuilder();
-    sb.append(server).append("/getfile/").append(algorithm).append('/').append(hash);
+    sb.append(server).append("/getfile/").append(hash);
     
     return sb.toString();
   }

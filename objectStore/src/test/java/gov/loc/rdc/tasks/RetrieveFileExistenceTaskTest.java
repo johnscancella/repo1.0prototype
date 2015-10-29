@@ -18,7 +18,7 @@ public class RetrieveFileExistenceTaskTest extends Assert{
     File file = new File(hashFolder, "ABC123");
     file.createNewFile();
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
-    RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "SHA-256", "ABC123");
+    RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "ABC123");
     sut.doTaskWork();
     assertTrue((Boolean)result.getResult());
   }
@@ -26,7 +26,7 @@ public class RetrieveFileExistenceTaskTest extends Assert{
   @Test
   public void testFileDoesntExists(){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
-    RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "SHA-256", "ABC123XYZ");
+    RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "ABC123XYZ");
     sut.doTaskWork();
     assertFalse((Boolean)result.getResult());
   }

@@ -12,8 +12,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class RetrieveFileExistenceTask extends AbstractFileInfoTask implements Runnable, HashPathUtils {
   private final DeferredResult<Boolean> result;
 
-  public RetrieveFileExistenceTask(DeferredResult<Boolean> result, File objectStoreRootDir, String algorithm, String hash) {
-    super(objectStoreRootDir, algorithm, hash);
+  public RetrieveFileExistenceTask(DeferredResult<Boolean> result, File objectStoreRootDir, String hash) {
+    super(objectStoreRootDir, hash);
     this.result = result;
   }
 

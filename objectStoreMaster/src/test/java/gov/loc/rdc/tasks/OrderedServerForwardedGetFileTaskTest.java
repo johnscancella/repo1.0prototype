@@ -24,7 +24,7 @@ public class OrderedServerForwardedGetFileTaskTest extends Assert {
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(response);
     DeferredResult<byte[]> result = new DeferredResult<>();
     OrderedServerForwardedGetFileTask sut = 
-        new OrderedServerForwardedGetFileTask(Arrays.asList("a"), result, "SHA-256", "ABC123", mockRestTemplate);
+        new OrderedServerForwardedGetFileTask(Arrays.asList("a"), result, "ABC123", mockRestTemplate);
     
     sut.run();
     assertArrayEquals(response.getByteArray(), (byte[]) result.getResult());
@@ -36,7 +36,7 @@ public class OrderedServerForwardedGetFileTaskTest extends Assert {
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenThrow(error);
     DeferredResult<byte[]> result = new DeferredResult<>();
     OrderedServerForwardedGetFileTask sut = 
-        new OrderedServerForwardedGetFileTask(Arrays.asList("a"), result, "SHA-256", "ABC123", mockRestTemplate);
+        new OrderedServerForwardedGetFileTask(Arrays.asList("a"), result, "ABC123", mockRestTemplate);
     
     sut.run();
     assertEquals(error, result.getResult());

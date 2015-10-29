@@ -2,7 +2,6 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
-import gov.loc.rdc.tasks.OrderedServerForwardedScpFileTransferTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedStoreFileTask;
 
 import java.util.List;
@@ -32,24 +31,12 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   private RoundRobinServerController roundRobinServerController;
   
   @Override
-  @RequestMapping(value=RequestMappings.SCP_FILE, method={RequestMethod.POST, RequestMethod.PUT, RequestMethod.PUT})
-  public DeferredResult<Boolean> scp(@RequestParam(value="filepath") String filePath, @RequestParam(value="tourl") String toUrl){
-    DeferredResult<Boolean> result = new DeferredResult<Boolean>();
-    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
-    
-    OrderedServerForwardedScpFileTransferTask task = new OrderedServerForwardedScpFileTransferTask(roundRobinServerList, result, toUrl, filePath);
-    threadExecutor.execute(task);
-    
-    return result;
-  }
-  
-  @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public DeferredResult<byte[]> getFile(@PathVariable String algorithm, @PathVariable String hash){
+  public DeferredResult<byte[]> getFile(@PathVariable String hash){
     DeferredResult<byte[]> result = new DeferredResult<>();
     List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
     
-    OrderedServerForwardedGetFileTask task = new OrderedServerForwardedGetFileTask(roundRobinServerList, result, algorithm, hash);
+    OrderedServerForwardedGetFileTask task = new OrderedServerForwardedGetFileTask(roundRobinServerList, result, hash);
     threadExecutor.execute(task);
     
     return result;
@@ -69,11 +56,11 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   
   @Override
   @RequestMapping(value=RequestMappings.FILE_EXISTS_URL, method={RequestMethod.GET, RequestMethod.POST})
-  public DeferredResult<Boolean> fileExists(@PathVariable String algorithm, @PathVariable String hash){
+  public DeferredResult<Boolean> fileExists( @PathVariable String hash){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
     List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
     
-    OrderedServerForwardedFileExistsTask task = new OrderedServerForwardedFileExistsTask(roundRobinServerList, result, algorithm, hash);
+    OrderedServerForwardedFileExistsTask task = new OrderedServerForwardedFileExistsTask(roundRobinServerList, result, hash);
     threadExecutor.execute(task);
     
     return result;

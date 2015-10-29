@@ -22,7 +22,7 @@ public class OrderedServerForwardedFileExistsTaskTest extends Assert {
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(true);
     DeferredResult<Boolean> result = new DeferredResult<>();
     OrderedServerForwardedFileExistsTask sut = new 
-        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "SHA-256", "ABC123", mockRestTemplate);
+        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "ABC123", mockRestTemplate);
     
     sut.run();
     assertTrue((Boolean)result.getResult());
@@ -33,7 +33,7 @@ public class OrderedServerForwardedFileExistsTaskTest extends Assert {
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenReturn(false);
     DeferredResult<Boolean> result = new DeferredResult<>();
     OrderedServerForwardedFileExistsTask sut = new 
-        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "SHA-256", "ABC123", mockRestTemplate);
+        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "ABC123", mockRestTemplate);
     
     sut.run();
     assertFalse((Boolean)result.getResult());
@@ -45,7 +45,7 @@ public class OrderedServerForwardedFileExistsTaskTest extends Assert {
     Mockito.when(mockRestTemplate.getForObject(Mockito.anyString(), Mockito.any())).thenThrow(error);
     DeferredResult<Boolean> result = new DeferredResult<>();
     OrderedServerForwardedFileExistsTask sut = new 
-        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "SHA-256", "ABC123", mockRestTemplate);
+        OrderedServerForwardedFileExistsTask(Arrays.asList("fooServer"), result, "ABC123", mockRestTemplate);
     
     sut.run();
     assertEquals(error, result.getResult());
