@@ -2,7 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
-import gov.loc.rdc.tasks.OrderedServerForwardedStoreFileTask;
+import gov.loc.rdc.tasks.StoreFileMessageTask;
 
 import java.util.List;
 
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rabbitmq.client.Channel;
+
 /**
  * Handles forwarding storing and getting files based on their hash to the proper slave node.
  */
@@ -29,6 +31,9 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   
   @Autowired
   private RoundRobinServerController roundRobinServerController;
+  
+  @Autowired
+  private MessageQueueController messageQueueController;
   
   @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -46,10 +51,12 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   @RequestMapping(value=RequestMappings.STORE_FILE_URL, method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file){
     DeferredResult<String> result = new DeferredResult<String>();
-    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
+    Channel channel = messageQueueController.getChannel();
     
-    OrderedServerForwardedStoreFileTask task = new OrderedServerForwardedStoreFileTask(roundRobinServerList, result, file);
-    threadExecutor.execute(task);
+    for(String queueName : messageQueueController.getFileSendingQueueNames()){
+      StoreFileMessageTask task = new StoreFileMessageTask(result, file, channel, queueName);
+      threadExecutor.execute(task);
+    }
     
     return result;
   }

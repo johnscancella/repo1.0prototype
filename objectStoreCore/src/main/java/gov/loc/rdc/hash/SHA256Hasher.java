@@ -11,6 +11,13 @@ import org.slf4j.LoggerFactory;
 
 public class SHA256Hasher {
   private static final Logger logger = LoggerFactory.getLogger(SHA256Hasher.class);
+  
+  public static String hash(final byte[] data) throws Exception{
+    MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+    messageDigest.update(data);
+    
+    return formatMessageDigest(messageDigest);
+  }
 
   public static String hash(InputStream inputStream) throws Exception {
     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -29,6 +36,10 @@ public class SHA256Hasher {
     }
 
     // Convert the byte to hex format
+    return formatMessageDigest(messageDigest);
+  }
+  
+  protected static String formatMessageDigest(final MessageDigest messageDigest){
     try (Formatter formatter = new Formatter()) {
       for (final byte b : messageDigest.digest()) {
         formatter.format("%02x", b);

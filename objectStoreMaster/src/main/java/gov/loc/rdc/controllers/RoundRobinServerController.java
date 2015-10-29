@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * Handles load balancing the servers in a round robin style
  */
 @RestController
+@Deprecated
 public class RoundRobinServerController {
   private static final Logger logger = LoggerFactory.getLogger(RoundRobinServerController.class);
   private final RestTemplate restTemplate;

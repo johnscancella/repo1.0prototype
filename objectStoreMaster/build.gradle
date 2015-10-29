@@ -13,7 +13,8 @@ dependencies {
     project(':objectStoreCore'),
     'org.springframework.boot:spring-boot-starter-ws:1.2.5.RELEASE',
     'org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE', //adds a bunch of default endpoints to rest services
-    'org.codehaus.groovy:groovy-all:2.4.0'
+    'org.codehaus.groovy:groovy-all:2.4.0',
+    'com.rabbitmq:amqp-client:3.5.6'
 
     testCompile 'junit:junit:4.12',
     'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE'

@@ -8,4 +8,5 @@ public class RequestMappings {
   public static final String FILE_EXISTS_URL = "/fileexists//{hash}";
   public static final String ADD_SERVER_TO_CLUSTER_POOL_URL = "/add/objectstorenode/{serverName}";
   public static final String IS_ALIVE_URL = "/isalive";
+  public static final String GET_FILE_STORE_QUEUE_NAME_URL = "/filestore/queuename";
 }
