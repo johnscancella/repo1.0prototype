@@ -1,16 +1,21 @@
 package gov.loc.rdc.runners;
 
 import gov.loc.rdc.controllers.RequestMappings;
+import gov.loc.rdc.entities.FileStoreData;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
+import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -30,6 +35,9 @@ import com.rabbitmq.client.Envelope;
 @Component
 public class QueueListenerRunner implements CommandLineRunner, HashPathUtils{
   private static final Logger logger = LoggerFactory.getLogger(QueueListenerRunner.class);
+  
+  @Autowired
+  private FileStoreRepository fileStoreRepo;
   
   @Value("${master_url}")
   private String masterNodeUrl;
@@ -53,7 +61,7 @@ public class QueueListenerRunner implements CommandLineRunner, HashPathUtils{
   public void run(String... args) throws Exception {
     queueName = getQueueName(masterNodeUrl);
     channel = createChannel(queueName, mqHost);
-    storeFiles(channel, queueName, objectStoreRootDir);
+    storeFiles(channel, queueName);
   }
   
   protected String getQueueName(String hostname){
@@ -92,42 +100,47 @@ public class QueueListenerRunner implements CommandLineRunner, HashPathUtils{
     return newChannel;
   }
   
-  protected void storeFiles(Channel storeFileChannel, String queue, File rootDir) throws IOException{
+  protected void storeFiles(Channel storeFileChannel, String queue) throws IOException{
     Consumer consumer = new DefaultConsumer(storeFileChannel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body)
           throws IOException {
-        storeFile(rootDir, body);
-        //TODO update database
-        storeFileChannel.basicAck(envelope.getDeliveryTag(), false);
+        try{
+          String hash = storeFile(body);
+          String host = getHostName();
+          fileStoreRepo.upsert(new FileStoreData(hash, host));
+          storeFileChannel.basicAck(envelope.getDeliveryTag(), false);
+        }
+        catch(Exception e){
+          logger.error("Could not write bytes to filesystem.", e);
+          //TODO send email or other notification?
+        }
         }};
     boolean autoAck=false;
     storeFileChannel.basicConsume(queue, autoAck, consumer);
   }
   
-  protected void storeFile(File rootDir, byte[] data){
+  protected String storeFile(byte[] data) throws Exception{
     if(data != null && data.length > 0){
-      try{
-        String hash = SHA256Hasher.hash(data);
-        File storedFile = computeStoredLocation(rootDir, hash);
-        if(!storedFile.exists()){
-          logger.debug("Creating path [{}] if it does not already exist.", storedFile.getParent());
-          Files.createDirectories(storedFile.getParentFile().toPath());
-          logger.info("Writing bytes to [{}] with hash [{}].", storedFile.toURI(), hash);
-          Files.write(storedFile.toPath(), data, StandardOpenOption.CREATE);
-        }
-        else{
-          logger.info("Already stored file with hash [{}], skipping.", hash);
-        }
+      String hash = SHA256Hasher.hash(data);
+      File storedFile = computeStoredLocation(objectStoreRootDir, hash);
+      if(!storedFile.exists()){
+        logger.debug("Creating path [{}] if it does not already exist.", storedFile.getParent());
+        Files.createDirectories(storedFile.getParentFile().toPath());
+        logger.info("Writing bytes to [{}] with hash [{}].", storedFile.toURI(), hash);
+        Files.write(storedFile.toPath(), data, StandardOpenOption.CREATE);
       }
-      catch(Exception e){
-        logger.error("Could not write bytes to filesystem.", e);
-        //TODO send email or other notification?
+      else{
+        logger.info("Already stored file with hash [{}], skipping.", hash);
       }
+      return hash;
     }
-    else{
-      logger.warn("Tried to store file, but was null or empty!.");
-    }
+    throw new Exception("Byte data was null or empty!");
+  }
+  
+  protected String getHostName() throws UnknownHostException{
+    InetAddress localMachine = InetAddress.getLocalHost();
+    return localMachine.getHostName();
   }
 
 }

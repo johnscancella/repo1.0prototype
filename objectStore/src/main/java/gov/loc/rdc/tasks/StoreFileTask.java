@@ -1,10 +1,14 @@
 package gov.loc.rdc.tasks;
 
+import gov.loc.rdc.entities.FileStoreData;
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
+import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 
 import org.slf4j.Logger;
@@ -22,11 +26,13 @@ public class StoreFileTask implements Runnable, HashPathUtils{
   private final DeferredResult<String> result;
   private final MultipartFile file;
   private final File objectStoreRootDir;
+  private final FileStoreRepository fileStoreRepo;
   
-  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir) {
+  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir, FileStoreRepository fileStoreRepo) {
     this.result = result;
     this.file = file;
     this.objectStoreRootDir = objectStoreRootDir;
+    this.fileStoreRepo = fileStoreRepo;
   }
   
   @Override
@@ -34,6 +40,8 @@ public class StoreFileTask implements Runnable, HashPathUtils{
     if(!file.isEmpty()){
       try{
         String hash = store(file, objectStoreRootDir);
+        String host = getHostName();
+        fileStoreRepo.upsert(new FileStoreData(hash, host));
         result.setResult(hash);
       }catch(Exception e){
         logger.error("Failed to store file into object store.", e);
@@ -60,5 +68,10 @@ public class StoreFileTask implements Runnable, HashPathUtils{
     }
     
     return hash;
+  }
+  
+  protected String getHostName() throws UnknownHostException{
+    InetAddress localMachine = InetAddress.getLocalHost();
+    return localMachine.getHostName();
   }
 }

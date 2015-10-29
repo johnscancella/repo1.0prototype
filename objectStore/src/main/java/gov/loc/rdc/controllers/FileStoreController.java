@@ -1,5 +1,6 @@
 package gov.loc.rdc.controllers;
 
+import gov.loc.rdc.repositories.FileStoreRepository;
 import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
 import gov.loc.rdc.tasks.RetrieveFileTask;
 import gov.loc.rdc.tasks.StoreFileTask;
@@ -11,6 +12,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -28,6 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class FileStoreController implements FileStoreControllerApi{
   private static final Logger logger = LoggerFactory.getLogger(FileStoreController.class);
+  
+  @Autowired
+  private FileStoreRepository fileStoreRepo;
   
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
@@ -56,7 +61,7 @@ public class FileStoreController implements FileStoreControllerApi{
   public DeferredResult<String> storeFile(@RequestParam(value="file") MultipartFile file){
     DeferredResult<String> result = new DeferredResult<String>();
     
-    StoreFileTask task = new StoreFileTask(result, file, objectStoreRootDir);
+    StoreFileTask task = new StoreFileTask(result, file, objectStoreRootDir, fileStoreRepo);
     threadExecutor.execute(task);
     
     return result;
