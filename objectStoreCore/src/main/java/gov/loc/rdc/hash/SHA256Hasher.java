@@ -8,14 +8,11 @@ import java.util.Formatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-@Component
-public class SHA256Hasher implements Hasher {
+public class SHA256Hasher {
   private static final Logger logger = LoggerFactory.getLogger(SHA256Hasher.class);
 
-  @Override
-  public String hash(InputStream inputStream) throws Exception {
+  public static String hash(InputStream inputStream) throws Exception {
     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
     String hash = hash(inputStream, messageDigest);
     logger.debug("Computed SHA256 hash to be {}", hash);
@@ -23,7 +20,7 @@ public class SHA256Hasher implements Hasher {
     return hash;
   }
 
-  protected String hash(final InputStream inputStream, final MessageDigest messageDigest) throws IOException {
+  protected static String hash(final InputStream inputStream, final MessageDigest messageDigest) throws IOException {
     try (InputStream is = new BufferedInputStream(inputStream)) {
       final byte[] buffer = new byte[1024];
       for (int read = 0; (read = is.read(buffer)) != -1;) {

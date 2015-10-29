@@ -2,11 +2,9 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.hash.Hasher;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,8 +14,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -33,14 +29,10 @@ public class FileStoreControllerTest extends Assert {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
-  @Mock
-  private Hasher mockHasher;
-
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
     FileStoreController fileStoreController = new FileStoreController();
-    fileStoreController.setHasher(mockHasher);
     fileStoreController.setObjectStoreRootDir(folder.newFolder());
     fileStoreController.setThreadExecutor(new MockThreadpool());
     this.mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
@@ -79,15 +71,12 @@ public class FileStoreControllerTest extends Assert {
   @Test
   public void testThrowingErrorWithFilesystem() throws Exception {
     FileStoreController fileStoreController = new FileStoreController();
-    fileStoreController.setHasher(mockHasher);
     fileStoreController.setObjectStoreRootDir(new File("/foo"));
     fileStoreController.setThreadExecutor(new MockThreadpool());
     mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
 
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
-    String mockHash = "123ABC";
-    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
 
@@ -98,43 +87,27 @@ public class FileStoreControllerTest extends Assert {
   @Test
   public void testGettingExistingFile() throws Exception {
     URL url = getClass().getClassLoader().getResource("testFile.txt");
-    storeData();
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
+    String hash = storeData();
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/getfile/" + hash)).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     assertArrayEquals(Files.readAllBytes(Paths.get(url.toURI())), (byte[]) result.getAsyncResult());
   }
 
-  @Test
-  public void testStoringAsync() throws Exception {
+  private String storeData() throws Exception {
     ClassLoader classLoader = getClass().getClassLoader();
     File testFile = new File(classLoader.getResource("testFile.txt").getFile());
-    String mockHash = "123ABC";
-    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
     FileInputStream fis = new FileInputStream(testFile);
     MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
 
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile").file(multipartFile))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(mockHash, result.getAsyncResult());
-  }
-
-  private void storeData() throws Exception {
-    ClassLoader classLoader = getClass().getClassLoader();
-    File testFile = new File(classLoader.getResource("testFile.txt").getFile());
-    String mockHash = "123ABC";
-    Mockito.when(mockHasher.hash(Mockito.any(InputStream.class))).thenReturn(mockHash);
-    FileInputStream fis = new FileInputStream(testFile);
-    MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
-
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/storefile").file(multipartFile))
-        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-    assertEquals(mockHash, result.getAsyncResult());
+    return (String) result.getAsyncResult();
   }
   
   @Test
   public void testIfFileExists() throws Exception{
-    storeData();
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/123ABC")).andExpect(MockMvcResultMatchers.status().isOk())
+    String hash = storeData();
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/fileexists/" + hash)).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     assertEquals(true, result.getAsyncResult());
   }

@@ -2,7 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.MissingParametersException;
-import gov.loc.rdc.hash.Hasher;
+import gov.loc.rdc.hash.SHA256Hasher;
 
 import java.io.File;
 import java.nio.file.FileVisitOption;
@@ -12,7 +12,6 @@ import java.nio.file.StandardOpenOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +29,6 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
 
-  @Autowired
-  private Hasher hasher;
-  
   @Override
   @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
   public void restfulVerifyIntegrity(@RequestParam(value="rootdir", required=false) String rootDir){
@@ -74,7 +70,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
 
   protected void visitFile(Path path) {
     try {
-      String hash = hasher.hash(Files.newInputStream(path, StandardOpenOption.READ));
+      String hash = SHA256Hasher.hash(Files.newInputStream(path, StandardOpenOption.READ));
       boolean isVerified = hash.equals(path.toFile().getName());
       if (!isVerified) {
         StringBuilder sb = new StringBuilder();
@@ -95,10 +91,5 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   // for testing only
   protected void setObjectStoreRootDir(File objectStoreRootDir) {
     this.objectStoreRootDir = objectStoreRootDir;
-  }
-
-  // for testing only
-  protected void setHasher(Hasher hasher) {
-    this.hasher = hasher;
   }
 }

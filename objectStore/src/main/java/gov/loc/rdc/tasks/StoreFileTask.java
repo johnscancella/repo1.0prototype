@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.hash.HashPathUtils;
-import gov.loc.rdc.hash.Hasher;
+import gov.loc.rdc.hash.SHA256Hasher;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,20 +22,18 @@ public class StoreFileTask implements Runnable, HashPathUtils{
   private final DeferredResult<String> result;
   private final MultipartFile file;
   private final File objectStoreRootDir;
-  private final Hasher hasher;
   
-  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir, Hasher hasher) {
+  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir) {
     this.result = result;
     this.file = file;
     this.objectStoreRootDir = objectStoreRootDir;
-    this.hasher = hasher;
   }
   
   @Override
   public void run() {
     if(!file.isEmpty()){
       try{
-        String hash = store(file, objectStoreRootDir, hasher);
+        String hash = store(file, objectStoreRootDir);
         result.setResult(hash);
       }catch(Exception e){
         logger.error("Failed to store file into object store.", e);
@@ -47,8 +45,8 @@ public class StoreFileTask implements Runnable, HashPathUtils{
     }
   }
   
-  protected String store(MultipartFile multipartFile, File dirToStore, Hasher hasherImpl) throws Exception{
-    String hash = hasherImpl.hash(multipartFile.getInputStream());
+  protected String store(MultipartFile multipartFile, File dirToStore) throws Exception{
+    String hash = SHA256Hasher.hash(multipartFile.getInputStream());
     File storedFile = computeStoredLocation(dirToStore, hash);
     
     if(!storedFile.exists()){

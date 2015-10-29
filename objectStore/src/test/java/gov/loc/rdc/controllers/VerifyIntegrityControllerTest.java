@@ -1,7 +1,6 @@
 package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
-import gov.loc.rdc.hash.SHA256Hasher;
 
 import java.io.File;
 
@@ -24,7 +23,6 @@ public class VerifyIntegrityControllerTest {
     testDir = new File(getClass().getClassLoader().getResource("validObjectStore").getFile());
     sut.setObjectStoreRootDir(testDir);
     
-    sut.setHasher(new SHA256Hasher());
     this.mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
   }
 
