@@ -18,9 +18,6 @@ import org.springframework.web.client.RestTemplate;
 public class RegisterRunner implements CommandLineRunner{
   private static final Logger logger = LoggerFactory.getLogger(RegisterRunner.class);
   
-  @Value("${is_cluster_enabled:true}")
-  private boolean isClusterEnabled;
-  
   @Value("${master_url}")
   private String masterNodeUrl;
   
@@ -35,23 +32,15 @@ public class RegisterRunner implements CommandLineRunner{
   
   @Override
   public void run(String... args) throws Exception {
-    if(isClusterEnabled){
-      logger.info("Cluster mode is enabled. Registering with master objectStore node [{}].", masterNodeUrl);
-      
-      InetAddress localMachine = InetAddress.getLocalHost();
-      
-      register(localMachine.getHostName());
-    }
-    else{
-      logger.info("Standalone mode is enabled. Your objectStore could be faster and more dependable, please consider running in cluster mode.");
-    }
+    logger.info("Cluster mode is enabled. Registering with master objectStore node [{}].", masterNodeUrl);
+    InetAddress localMachine = InetAddress.getLocalHost();
+    register(localMachine.getHostName());
   }
   
   protected void register(String hostname){
     String requestUrl = hostname + RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL;
     while(true){
       try{
-          
           boolean isRegisteredWithMaster = restTemplate.getForObject(requestUrl, Boolean.class, myUrl);
           if(isRegisteredWithMaster){
             return;
