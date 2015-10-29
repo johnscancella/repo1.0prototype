@@ -35,9 +35,6 @@ public class FileStoreController implements FileStoreControllerApi{
   @Value("${root_dir:/tmp}")
   private File objectStoreRootDir;
   
-  @Value("${key_path:~/.ssh/id_rsa}")
-  private String keyPath;
-  
   @PostConstruct
   public void info(){
     logger.info("Storing hashed files in [{}] directory", objectStoreRootDir.toURI());
@@ -84,10 +81,5 @@ public class FileStoreController implements FileStoreControllerApi{
   //only used in unit test
   protected void setThreadExecutor(ThreadPoolTaskExecutor threadExecutor) {
     this.threadExecutor = threadExecutor;
-  }
-
-  //only used in unit test
-  protected void setKeyPath(String keyPath) {
-    this.keyPath = keyPath;
   }
 }
