@@ -17,22 +17,22 @@ public class ForwardingVerifyIntegrityController implements VerifyIntegrityContr
   private final RestTemplate restTemplate;
   
   @Autowired
-  private RoundRobinServerController roundRobinServerController;
+  private ServerRegistraController serverRegistraController;
   
   public ForwardingVerifyIntegrityController(){
     restTemplate = new RestTemplate();
   }
   
   //for unit testing only
-  protected ForwardingVerifyIntegrityController(RestTemplate restTemplate, RoundRobinServerController roundRobinServerController){
+  protected ForwardingVerifyIntegrityController(RestTemplate restTemplate, ServerRegistraController roundRobinServerController){
     this.restTemplate = restTemplate;
-    this.roundRobinServerController = roundRobinServerController;
+    this.serverRegistraController = roundRobinServerController;
   }
 
   @Override
   @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
   public void restfulVerifyIntegrity(@RequestParam(value="rootdir",required=false) String rootDir) {
-    List<String> serversToVisit = roundRobinServerController.getAvailableServers();
+    List<String> serversToVisit = serverRegistraController.listServers();
     
     for(String serverToVisit : serversToVisit){
       String url = constructUrl(serverToVisit, false);

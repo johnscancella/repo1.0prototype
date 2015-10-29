@@ -25,17 +25,17 @@ public class ForwardingVerifyIntegrityControllerTest extends Assert {
   private RestTemplate mockRestTemplate;
   
   @Mock
-  private RoundRobinServerController mockRoundRobinServerController;
+  private ServerRegistraController mockServerRegistraController;
   
   @Before
   public void setup(){
-    sut = new ForwardingVerifyIntegrityController(mockRestTemplate, mockRoundRobinServerController);
+    sut = new ForwardingVerifyIntegrityController(mockRestTemplate, mockServerRegistraController);
     mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
   }
   
   @Test
   public void testVerifyWithDefaultDirectory() throws Exception{
-    Mockito.when(mockRoundRobinServerController.getAvailableServers()).thenReturn(Arrays.asList("aServer"));
+    Mockito.when(mockServerRegistraController.listServers()).thenReturn(Arrays.asList("aServer"));
 
     mockMvc.perform(MockMvcRequestBuilders.get(RequestMappings.VERIFY_INTEGRITY_URL)).andExpect(MockMvcResultMatchers.status().isOk());
     mockMvc.perform(MockMvcRequestBuilders.put(RequestMappings.VERIFY_INTEGRITY_URL)).andExpect(MockMvcResultMatchers.status().isOk());
@@ -46,7 +46,7 @@ public class ForwardingVerifyIntegrityControllerTest extends Assert {
   
   @Test
   public void testVerifyWithSpecifiedDirectory() throws Exception{
-    Mockito.when(mockRoundRobinServerController.getAvailableServers()).thenReturn(Arrays.asList("aServer"));
+    Mockito.when(mockServerRegistraController.listServers()).thenReturn(Arrays.asList("aServer"));
 
     mockMvc.perform(MockMvcRequestBuilders.get(RequestMappings.VERIFY_INTEGRITY_URL).param("rootdir", "/foo")).andExpect(MockMvcResultMatchers.status().isOk());
     mockMvc.perform(MockMvcRequestBuilders.put(RequestMappings.VERIFY_INTEGRITY_URL).param("rootdir", "/foo")).andExpect(MockMvcResultMatchers.status().isOk());

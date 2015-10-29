@@ -1,5 +1,7 @@
 package gov.loc.rdc.controllers;
 
+import gov.loc.rdc.entities.FileStoreData;
+import gov.loc.rdc.repositories.FileStoreRepository;
 import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
 import gov.loc.rdc.tasks.StoreFileMessageTask;
@@ -30,18 +32,22 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   private ThreadPoolTaskExecutor threadExecutor;
   
   @Autowired
-  private RoundRobinServerController roundRobinServerController;
+  private ServerRegistraController serverRegistraController;
   
   @Autowired
   private MessageQueueController messageQueueController;
+  
+  @Autowired
+  private FileStoreRepository fileStoreRepo; //TODO replace some methods with using this.
   
   @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public DeferredResult<byte[]> getFile(@PathVariable String hash){
     DeferredResult<byte[]> result = new DeferredResult<>();
-    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
+    FileStoreData data = fileStoreRepo.get(hash);
+    List<String> urls = serverRegistraController.getUrls(data.getServers());
     
-    OrderedServerForwardedGetFileTask task = new OrderedServerForwardedGetFileTask(roundRobinServerList, result, hash);
+    OrderedServerForwardedGetFileTask task = new OrderedServerForwardedGetFileTask(urls, result, hash);
     threadExecutor.execute(task);
     
     return result;
@@ -65,9 +71,10 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   @RequestMapping(value=RequestMappings.FILE_EXISTS_URL, method={RequestMethod.GET, RequestMethod.POST})
   public DeferredResult<Boolean> fileExists( @PathVariable String hash){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
-    List<String> roundRobinServerList = roundRobinServerController.getAvailableServers();
+    FileStoreData data = fileStoreRepo.get(hash);
+    List<String> urls = serverRegistraController.getUrls(data.getServers());
     
-    OrderedServerForwardedFileExistsTask task = new OrderedServerForwardedFileExistsTask(roundRobinServerList, result, hash);
+    OrderedServerForwardedFileExistsTask task = new OrderedServerForwardedFileExistsTask(urls, result, hash);
     threadExecutor.execute(task);
     
     return result;
@@ -79,7 +86,15 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   }
 
   //only used in unit test
-  protected void setRoundRobinServerController(RoundRobinServerController roundRobinServerController) {
-    this.roundRobinServerController = roundRobinServerController;
+  protected void setServerRegistraController(ServerRegistraController roundRobinServerController) {
+    this.serverRegistraController = roundRobinServerController;
+  }
+
+  protected void setFileStoreRepo(FileStoreRepository fileStoreRepo) {
+    this.fileStoreRepo = fileStoreRepo;
+  }
+
+  protected void setMessageQueueController(MessageQueueController messageQueueController) {
+    this.messageQueueController = messageQueueController;
   }
 }

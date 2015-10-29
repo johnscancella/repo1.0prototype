@@ -87,4 +87,8 @@ public class FileStoreController implements FileStoreControllerApi{
   protected void setThreadExecutor(ThreadPoolTaskExecutor threadExecutor) {
     this.threadExecutor = threadExecutor;
   }
+
+  protected void setFileStoreRepo(FileStoreRepository fileStoreRepo) {
+    this.fileStoreRepo = fileStoreRepo;
+  }
 }

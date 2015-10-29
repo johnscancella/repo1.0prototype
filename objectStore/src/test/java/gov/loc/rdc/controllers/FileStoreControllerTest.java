@@ -2,6 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
+import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -28,6 +30,9 @@ public class FileStoreControllerTest extends Assert {
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
+  
+  @Mock
+  private FileStoreRepository mockFileStoreRepo;
 
   @Before
   public void setup() throws Exception {
@@ -35,6 +40,7 @@ public class FileStoreControllerTest extends Assert {
     FileStoreController fileStoreController = new FileStoreController();
     fileStoreController.setObjectStoreRootDir(folder.newFolder());
     fileStoreController.setThreadExecutor(new MockThreadpool());
+    fileStoreController.setFileStoreRepo(mockFileStoreRepo);
     this.mockMvc = MockMvcBuilders.standaloneSetup(fileStoreController).build();
   }
 
