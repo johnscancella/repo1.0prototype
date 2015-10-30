@@ -4,12 +4,11 @@ import gov.loc.rdc.controllers.RequestMappings;
 import gov.loc.rdc.entities.FileStoreData;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
+import gov.loc.rdc.host.HostUtils;
 import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
@@ -33,7 +32,7 @@ import com.rabbitmq.client.Envelope;
  * Responsible for getting the name of the queue to listen to and processing the requests.
  */
 @Component
-public class QueueListenerRunner implements CommandLineRunner, HashPathUtils{
+public class QueueListenerRunner implements CommandLineRunner, HashPathUtils, HostUtils{
   private static final Logger logger = LoggerFactory.getLogger(QueueListenerRunner.class);
   
   @Autowired
@@ -137,10 +136,4 @@ public class QueueListenerRunner implements CommandLineRunner, HashPathUtils{
     }
     throw new Exception("Byte data was null or empty!");
   }
-  
-  protected String getHostName() throws UnknownHostException{
-    InetAddress localMachine = InetAddress.getLocalHost();
-    return localMachine.getHostName();
-  }
-
 }

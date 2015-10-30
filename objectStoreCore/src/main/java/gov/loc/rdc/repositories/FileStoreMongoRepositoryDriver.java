@@ -2,6 +2,9 @@ package gov.loc.rdc.repositories;
 
 import gov.loc.rdc.entities.FileStoreData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,5 +39,23 @@ public class FileStoreMongoRepositoryDriver implements FileStoreRepository{
     }
     
     return fileStoreData;
+  }
+
+  @Override
+  public List<String> getHashesForServer(String server) {
+    List<String> hashes = new ArrayList<>();
+    Query query = new Query();
+    query.addCriteria(Criteria.where("servers").in(server));
+    
+    List<FileStoreData> returnedData = mongoTemplate.findAll(FileStoreData.class);
+    
+    if(returnedData != null){
+      hashes = new ArrayList<>(returnedData.size());
+      for(FileStoreData data : returnedData){
+        hashes.add(data.getHash());
+      }
+    }
+    
+    return hashes;
   }
 }

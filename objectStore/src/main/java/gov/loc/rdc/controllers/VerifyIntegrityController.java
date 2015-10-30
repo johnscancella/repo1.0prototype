@@ -2,16 +2,23 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.MissingParametersException;
+import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
+import gov.loc.rdc.host.HostUtils;
+import gov.loc.rdc.notification.NotificationManager;
+import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +30,18 @@ import org.springframework.web.bind.annotation.RestController;
  * Responsible for continuously and programmically verifying that files haven't become corrupt. 
  */
 @RestController
-public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
-  private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityControllerApi.class);
+public class VerifyIntegrityController implements VerifyIntegrityControllerApi, HashPathUtils, HostUtils{
+  private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityController.class);
+  
+  @Autowired
+  private FileStoreRepository fileStoreRepo;
+  
+  @Autowired
+  private NotificationManager notificationManager;
 
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
-
+  
   @Override
   @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
   public void restfulVerifyIntegrity(@RequestParam(value="rootdir", required=false) String rootDir){
@@ -51,6 +64,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
   @Scheduled(cron = "${integrity-wait-cron:0 0 0 * * *}")
   public void verifyIntegrity() {
     scan(objectStoreRootDir);
+    verifyFilesExist();
   }
   
   protected void scan(File StartingDir){
@@ -61,8 +75,8 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
       }
       catch (Exception e) {
         logger.error("Failed to walk tree", e);
+        notificationManager.notify("Failed to walk tree.", e);
         throw new InternalErrorException(e);
-        // TODO some other notification?
       }
       logger.info("Finished integrity verification on [{}] directory", StartingDir);
     }
@@ -76,16 +90,42 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi{
         StringBuilder sb = new StringBuilder();
         sb.append("Found integrity error with file ").append(path).append("]. Computed hash is [").append(hash).append("]");
         logger.error(sb.toString());
+        notificationManager.notify(sb.toString());
         throw new InternalErrorException(sb.toString());
-        // TODO some other notification?
       }
       logger.debug("Verified [{}] matches computed hash.", path);
     }
     catch (Exception e) {
       logger.error("Failed to compute hash for file [{}]", path, e);
+      notificationManager.notify("Failed to compute hash for file.", e);
       throw new InternalErrorException(e);
-      // TODO some other notification
     }
+  }
+  
+  /**
+   * verify that all files that should exist on this server do.
+   * @throws UnknownHostException 
+   */
+  protected void verifyFilesExist(){
+    try{
+      String server = getHostName();
+      List<String> hashes = fileStoreRepo.getHashesForServer(server);
+      for(String hash : hashes){
+        File storedFile = computeStoredLocation(objectStoreRootDir, hash);
+        if(storedFile.exists()){
+          logger.debug("Verified that file [{}] exists.", storedFile);
+        }
+        else{
+          notificationManager.notify("Could not find file [" + hash + "] on server [" + server + "]!");
+        }
+      }
+    }
+    catch(Exception e){
+      logger.error("Could not verify files that should exist on this server do exist.", e);
+      notificationManager.notify("Could not verify files that should exist on this server do exist.", e);
+    }
+    
+    
   }
 
   // for testing only

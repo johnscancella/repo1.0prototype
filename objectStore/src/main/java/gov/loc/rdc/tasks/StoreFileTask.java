@@ -4,11 +4,10 @@ import gov.loc.rdc.entities.FileStoreData;
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
+import gov.loc.rdc.host.HostUtils;
 import gov.loc.rdc.repositories.FileStoreRepository;
 
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * responsible for storing a file in the object store and returning the file hash
  */
-public class StoreFileTask implements Runnable, HashPathUtils{
+public class StoreFileTask implements Runnable, HashPathUtils, HostUtils{
   private static final Logger logger = LoggerFactory.getLogger(StoreFileTask.class);
   private static final String NO_HASH = "Hash was not computed.";
   
@@ -68,10 +67,5 @@ public class StoreFileTask implements Runnable, HashPathUtils{
     }
     
     return hash;
-  }
-  
-  protected String getHostName() throws UnknownHostException{
-    InetAddress localMachine = InetAddress.getLocalHost();
-    return localMachine.getHostName();
   }
 }
