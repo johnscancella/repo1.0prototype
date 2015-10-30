@@ -36,6 +36,13 @@ public class MessageQueueController {
   private Set<String> fileSendingQueueNames;
   private Channel channel;
   private int queueIndex;
+  
+  //used for unit testing
+  protected MessageQueueController(Integer numberOfCopies, String mqHost, Integer maxNumberOfMessagesToProcessConcurrently){
+    this.numberOfCopies = numberOfCopies;
+    this.mqHost = mqHost;
+    this.maxNumberOfMessagesToProcessConcurrently = maxNumberOfMessagesToProcessConcurrently;
+  }
 
   @PostConstruct
   protected void setup() throws Exception{

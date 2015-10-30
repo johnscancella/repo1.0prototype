@@ -28,7 +28,15 @@ public class RegisterRunner implements CommandLineRunner{
   @Value("$url_to_register")
   private String myUrl;
   
-  private final RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate = new RestTemplate();
+  
+  //for unit tests only
+  protected RegisterRunner(String masterNodeUrl, Integer retryPeriod, String myUrl, RestTemplate template){
+    this.masterNodeUrl = masterNodeUrl;
+    this.retryPeriod = retryPeriod;
+    this.myUrl = myUrl;
+    restTemplate = template;
+  }
   
   @Override
   public void run(String... args) throws Exception {
@@ -37,7 +45,7 @@ public class RegisterRunner implements CommandLineRunner{
   }
   
   protected void register(String hostname){
-    String requestUrl = hostname + RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL;
+    String requestUrl = masterNodeUrl + RequestMappings.ADD_SERVER_TO_CLUSTER_POOL_URL;
     while(true){
       try{
           boolean isRegisteredWithMaster = restTemplate.getForObject(requestUrl, Boolean.class, myUrl);

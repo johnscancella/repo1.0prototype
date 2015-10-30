@@ -34,6 +34,11 @@ public class ForwardingVerifyIntegrityControllerTest extends Assert {
   }
   
   @Test
+  public void testDefaultConstructor(){
+    sut = new ForwardingVerifyIntegrityController();
+  }
+  
+  @Test
   public void testVerifyWithDefaultDirectory() throws Exception{
     Mockito.when(mockServerRegistraController.listServers()).thenReturn(Arrays.asList("aServer"));
 

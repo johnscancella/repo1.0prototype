@@ -132,4 +132,8 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi, 
   protected void setObjectStoreRootDir(File objectStoreRootDir) {
     this.objectStoreRootDir = objectStoreRootDir;
   }
+
+  protected void setNotificationManager(NotificationManager notificationManager) {
+    this.notificationManager = notificationManager;
+  }
 }

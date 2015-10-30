@@ -2,9 +2,9 @@ package gov.loc.rdc.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServerRegistraControllerTest extends Assert {
-  private static final List<String> MOCK_SERVER_LIST = Arrays.asList("a", "b", "c", "d", "e", "f");
+  private static final List<String> MOCK_SERVER_LIST = Arrays.asList("a", "b", "c", "d", "http://e:80", "https://f:8443");
   private MockMvc mockMvc;
   private ServerRegistraController sut;
   private List<String> servers;
@@ -35,12 +35,23 @@ public class ServerRegistraControllerTest extends Assert {
   public void setup() {
     servers = new ArrayList<>(MOCK_SERVER_LIST);
     sut = new ServerRegistraController();
-    Map<String, String> serverMap = new HashMap<>();
     for(String server : MOCK_SERVER_LIST){
-      serverMap.put(server, server);
+      sut.addServer(server);
     }
-    sut.setServerMap(serverMap);
     mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+  }
+  
+  @Test
+  public void testGetUrls(){
+    Set<String> hostNames = new HashSet<>();
+    hostNames.add("a");
+    hostNames.add("b");
+    hostNames.add("c");
+    hostNames.add("d");
+    hostNames.add("e");
+    hostNames.add("f");
+    List<String> urls = sut.getUrls(hostNames);
+    assertEquals(MOCK_SERVER_LIST, urls);
   }
   
   @Test

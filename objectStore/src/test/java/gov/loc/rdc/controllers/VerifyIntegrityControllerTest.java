@@ -1,24 +1,33 @@
 package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
+import gov.loc.rdc.notification.NotificationManager;
 
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VerifyIntegrityControllerTest {
   private VerifyIntegrityController sut;
   private MockMvc mockMvc;
   private File testDir;
   
+  @Mock
+  private NotificationManager mockNotificationManager; 
+  
   @Before
   public void setup(){
     sut = new VerifyIntegrityController();
+    sut.setNotificationManager(mockNotificationManager);
     
     testDir = new File(getClass().getClassLoader().getResource("validObjectStore").getFile());
     sut.setObjectStoreRootDir(testDir);

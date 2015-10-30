@@ -60,7 +60,7 @@ public class ServerRegistraController {
       startingIndex = 8;
     }
     if(serverName.contains(":")){
-      endingIndex = serverName.indexOf(':');
+      endingIndex = serverName.lastIndexOf(':');
     }
     
     return serverName.substring(startingIndex, endingIndex);
@@ -72,9 +72,5 @@ public class ServerRegistraController {
     boolean isSuccessful = serverMap.remove(hostName, serverName);
     
     return isSuccessful;
-  }
-
-  protected void setServerMap(Map<String, String> serverMap) {
-    this.serverMap = serverMap;
   }
 }

@@ -112,6 +112,8 @@ public class QueueListenerRunner implements CommandLineRunner, HashPathUtils, Ho
         }
         catch(Exception e){
           logger.error("Could not write bytes to filesystem.", e);
+          logger.debug("Rejecting message [{}] and requeuing due to error [{}].", envelope.getDeliveryTag(), e.getMessage());
+          storeFileChannel.basicNack(envelope.getDeliveryTag(), false, true);
           //TODO send email or other notification?
         }
         }};
