@@ -16,6 +16,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+/**
+ * Responsible for load balancing slave servers based on queue name and creating all the various queues.
+ */
 @RestController
 public class MessageQueueController {
   private static final Logger logger = LoggerFactory.getLogger(MessageQueueController.class);
