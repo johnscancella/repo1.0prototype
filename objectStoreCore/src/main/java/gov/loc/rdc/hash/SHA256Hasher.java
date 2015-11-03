@@ -9,6 +9,9 @@ import java.util.Formatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility for getting the the SHA-256 hash. 
+ */
 public class SHA256Hasher {
   private static final Logger logger = LoggerFactory.getLogger(SHA256Hasher.class);
   

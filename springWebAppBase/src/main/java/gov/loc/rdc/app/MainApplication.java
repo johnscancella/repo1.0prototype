@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * starts the spring-boot application. 
+ * Starts the spring-boot application. 
  * Also controls which packages get scanned and what spring beans to add to the context.
  */
 @SpringBootApplication

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Responsible for registering with the master node after starting up
+ * Responsible for registering with the master node after starting up.
  */
 @Component
 public class RegisterRunner implements CommandLineRunner{

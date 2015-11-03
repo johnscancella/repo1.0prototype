@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+/**
+ * Responsbile for getting, and storing metadata from the database.
+ */
 @RestController
 public class MetadataStoreController {
   private static final String BASE_DELETE_URL = "/deletemeta/{algorithm}/{hash}";

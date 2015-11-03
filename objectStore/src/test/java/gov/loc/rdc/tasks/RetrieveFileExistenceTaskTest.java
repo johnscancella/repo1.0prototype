@@ -19,7 +19,7 @@ public class RetrieveFileExistenceTaskTest extends Assert{
     file.createNewFile();
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
     RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "ABC123");
-    sut.doTaskWork();
+    sut.run();
     assertTrue((Boolean)result.getResult());
   }
   
@@ -27,7 +27,7 @@ public class RetrieveFileExistenceTaskTest extends Assert{
   public void testFileDoesntExists(){
     DeferredResult<Boolean> result = new DeferredResult<Boolean>();
     RetrieveFileExistenceTask sut = new RetrieveFileExistenceTask(result, folder.getRoot(), "ABC123XYZ");
-    sut.doTaskWork();
+    sut.run();
     assertFalse((Boolean)result.getResult());
   }
 }

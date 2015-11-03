@@ -22,7 +22,7 @@ public class RetrieveFileTask extends AbstractFileInfoTask implements Runnable, 
   }
 
   @Override
-  public void doTaskWork() {
+  public void run() {
     logger.debug("Searching for file with hash [{}].", hash);
     File storedFile = computeStoredLocation(objectStoreRootDir, hash);
 
@@ -41,10 +41,4 @@ public class RetrieveFileTask extends AbstractFileInfoTask implements Runnable, 
       result.setErrorResult(new ResourceNotFoundException());
     }
   }
-
-  @Override
-  protected DeferredResult<?> getResult() {
-    return result;
-  }
-
 }

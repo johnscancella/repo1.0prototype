@@ -8,6 +8,5 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public interface VerifyIntegrityControllerApi {
-  
   public void restfulVerifyIntegrity(@RequestParam(required=false) String rootDir);
 }

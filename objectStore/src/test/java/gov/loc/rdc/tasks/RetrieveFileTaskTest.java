@@ -21,7 +21,7 @@ public class RetrieveFileTaskTest extends Assert{
     file.createNewFile();
     DeferredResult<byte[]> result = new DeferredResult<byte[]>();
     RetrieveFileTask sut = new RetrieveFileTask(result, folder.getRoot(), "ABC123");
-    sut.doTaskWork();
+    sut.run();
     assertTrue(result.getResult() != null);
   }
   
@@ -29,7 +29,7 @@ public class RetrieveFileTaskTest extends Assert{
   public void testGetFileWhenFileDoesntExistReturnsResourceNotFoundException(){
     DeferredResult<byte[]> result = new DeferredResult<byte[]>();
     RetrieveFileTask sut = new RetrieveFileTask(result, folder.getRoot(), "ABC123XYZ");
-    sut.doTaskWork();
+    sut.run();
     assertTrue(result.getResult() instanceof ResourceNotFoundException);
   }
 }

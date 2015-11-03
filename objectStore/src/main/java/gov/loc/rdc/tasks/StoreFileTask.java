@@ -5,7 +5,7 @@ import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
 import gov.loc.rdc.host.HostUtils;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -25,9 +25,9 @@ public class StoreFileTask implements Runnable, HashPathUtils, HostUtils{
   private final DeferredResult<String> result;
   private final MultipartFile file;
   private final File objectStoreRootDir;
-  private final FileStoreRepository fileStoreRepo;
+  private final FileStoreMetadataRepository fileStoreRepo;
   
-  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir, FileStoreRepository fileStoreRepo) {
+  public StoreFileTask(DeferredResult<String> result, MultipartFile file, File objectStoreRootDir, FileStoreMetadataRepository fileStoreRepo) {
     this.result = result;
     this.file = file;
     this.objectStoreRootDir = objectStoreRootDir;

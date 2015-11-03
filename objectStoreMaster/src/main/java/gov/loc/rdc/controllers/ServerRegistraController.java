@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Handles keeping track of server addresses
+ * Handles keeping track of server addresses and rest URLs.
  */
 @RestController
 public class ServerRegistraController {

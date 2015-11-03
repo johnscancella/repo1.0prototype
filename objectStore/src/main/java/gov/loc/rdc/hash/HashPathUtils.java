@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * sharable methods for dealing with paths based on hashes.
+ * Sharable methods for dealing with paths based on hashes.
  */
 public interface HashPathUtils {
   public static final Logger log = LoggerFactory.getLogger(HashPathUtils.class);

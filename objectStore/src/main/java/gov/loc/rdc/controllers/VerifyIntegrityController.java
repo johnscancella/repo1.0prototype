@@ -6,7 +6,7 @@ import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
 import gov.loc.rdc.host.HostUtils;
 import gov.loc.rdc.notification.NotificationManager;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.net.UnknownHostException;
@@ -34,7 +34,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi, 
   private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityController.class);
   
   @Autowired
-  private FileStoreRepository fileStoreRepo;
+  private FileStoreMetadataRepository fileStoreRepo;
   
   @Autowired
   private NotificationManager notificationManager;

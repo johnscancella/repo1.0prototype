@@ -1,7 +1,7 @@
 package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.entities.FileStoreData;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 import gov.loc.rdc.tasks.OrderedServerForwardedFileExistsTask;
 import gov.loc.rdc.tasks.OrderedServerForwardedGetFileTask;
 import gov.loc.rdc.tasks.StoreFileMessageTask;
@@ -38,7 +38,7 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
   private MessageQueueController messageQueueController;
   
   @Autowired
-  private FileStoreRepository fileStoreRepo; //TODO replace some methods with using this.
+  private FileStoreMetadataRepository fileStoreRepo; //TODO replace some methods with using this.
   
   @Override
   @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -90,7 +90,7 @@ public class ForwardingFileStoreController implements FileStoreControllerApi{
     this.serverRegistraController = roundRobinServerController;
   }
 
-  protected void setFileStoreRepo(FileStoreRepository fileStoreRepo) {
+  protected void setFileStoreRepo(FileStoreMetadataRepository fileStoreRepo) {
     this.fileStoreRepo = fileStoreRepo;
   }
 

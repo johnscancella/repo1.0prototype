@@ -18,7 +18,7 @@ public class RetrieveFileExistenceTask extends AbstractFileInfoTask implements R
   }
 
   @Override
-  public void doTaskWork() {
+  public void run() {
     logger.debug("Searching for file with hash [{}].", hash);
     File storedFile = computeStoredLocation(objectStoreRootDir, hash);
 
@@ -29,10 +29,4 @@ public class RetrieveFileExistenceTask extends AbstractFileInfoTask implements R
       result.setResult(false);
     }
   }
-
-  @Override
-  protected DeferredResult<?> getResult() {
-    return result;
-  }
-
 }

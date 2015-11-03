@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * Intercept all restful calls and log user/computer information.
+ */
 public class UserRequestLoggingInterceptor extends HandlerInterceptorAdapter {
   private static final Logger logger = LoggerFactory.getLogger(UserRequestLoggingInterceptor.class);
 

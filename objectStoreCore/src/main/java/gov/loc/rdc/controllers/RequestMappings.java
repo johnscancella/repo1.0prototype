@@ -1,5 +1,8 @@
 package gov.loc.rdc.controllers;
 
+/**
+ * Shared mappings for rest URL by the projects.
+ */
 public class RequestMappings {
   public static final String VERIFY_INTEGRITY_URL = "/verifyintegrity";
   public static final String GET_FILE_URL = "/getfile/{hash}";

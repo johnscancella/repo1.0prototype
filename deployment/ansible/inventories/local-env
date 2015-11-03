@@ -17,3 +17,6 @@ localhost ansible_connection=local
 
 [mongo-db-servers]
 localhost ansible_connection=local
+
+[rabbit-mq-servers]
+localhost ansible_connection=local

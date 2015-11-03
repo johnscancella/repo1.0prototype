@@ -2,6 +2,9 @@ package gov.loc.rdc.entities;
 
 import java.util.Objects;
 
+/**
+ * A basic generic key value pair.
+ */
 public class KeyValuePair<K, V> {
   private K key;
   private V value;

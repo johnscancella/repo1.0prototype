@@ -4,7 +4,10 @@ import java.util.List;
 
 import gov.loc.rdc.entities.FileStoreData;
 
-public interface FileStoreRepository {
+/**
+ * Responsible for inserting, updating, and getting data related to stored objects on the filesystem.
+ */
+public interface FileStoreMetadataRepository {
   public void upsert(FileStoreData fileStoreData);
   public FileStoreData get(String hash);
   public List<String> getHashesForServer(String server); 

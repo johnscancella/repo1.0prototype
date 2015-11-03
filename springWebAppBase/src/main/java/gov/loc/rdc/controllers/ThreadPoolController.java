@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Define our own thread pool for rest api (or other) tasks.
+ */
 @RestController
 public class ThreadPoolController {
   private static final Logger logger = LoggerFactory.getLogger(ThreadPoolController.class);

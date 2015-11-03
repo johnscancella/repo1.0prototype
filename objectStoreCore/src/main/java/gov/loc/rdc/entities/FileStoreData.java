@@ -6,6 +6,9 @@ import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 
+/**
+ * For storing which servers have the associated hashed file on their filesystem.
+ */
 public class FileStoreData {
 
   @Id

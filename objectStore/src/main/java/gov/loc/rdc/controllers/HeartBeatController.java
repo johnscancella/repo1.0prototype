@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Responsible for replying to master node requests for heartbeats.
+ * Responsible for replying to requests for heartbeats.
  */
 @RestController
 public class HeartBeatController {

@@ -5,7 +5,7 @@ import gov.loc.rdc.entities.FileStoreData;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
 import gov.loc.rdc.host.HostUtils;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,14 +29,14 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 /**
- * Responsible for getting the name of the queue to listen to and processing the requests.
+ * Responsible for getting the name of the queue to listen to from master and processing the requests.
  */
 @Component
 public class QueueListenerRunner implements CommandLineRunner, HashPathUtils, HostUtils{
   private static final Logger logger = LoggerFactory.getLogger(QueueListenerRunner.class);
   
   @Autowired
-  private FileStoreRepository fileStoreRepo;
+  private FileStoreMetadataRepository fileStoreRepo;
   
   @Value("${master_url}")
   private String masterNodeUrl;

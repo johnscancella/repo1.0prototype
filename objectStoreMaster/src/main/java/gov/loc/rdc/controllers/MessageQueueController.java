@@ -37,6 +37,8 @@ public class MessageQueueController {
   private Channel channel;
   private int queueIndex;
   
+  public MessageQueueController(){}
+  
   //used for unit testing
   protected MessageQueueController(Integer numberOfCopies, String mqHost, Integer maxNumberOfMessagesToProcessConcurrently){
     this.numberOfCopies = numberOfCopies;

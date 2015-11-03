@@ -12,6 +12,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Utilities for converting a list of {@link KeyValuePair} to and from a JSON string.
+ */
 public class KeyValueJsonConverter {
 
   public static String convertToJson(List<KeyValuePair<String, String>> pairs) throws JsonProcessingException{

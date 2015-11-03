@@ -12,10 +12,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for inserting, updating, and getting data related to stored objects on the filesystem.
+ * MongoDb implementation of the {@link FileStoreMetadataRepository} interface
  */
 @Component
-public class FileStoreMongoRepositoryDriver implements FileStoreRepository{
+public class FileStoreMongoRepositoryDriver implements FileStoreMetadataRepository{
   
   @Autowired
   private MongoTemplate mongoTemplate;

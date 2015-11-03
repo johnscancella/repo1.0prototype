@@ -11,6 +11,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+/**
+ * A mongodb implementation of {@link MetadataRepository}
+ */
 @Component
 public class MetadataMongoRepositoryDriver implements MetadataRepository {
   private final MongoTemplate mongoTemplate;

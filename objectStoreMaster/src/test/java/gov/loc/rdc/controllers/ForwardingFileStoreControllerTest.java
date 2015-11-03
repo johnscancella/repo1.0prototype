@@ -1,7 +1,7 @@
 package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.entities.FileStoreData;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +35,7 @@ public class ForwardingFileStoreControllerTest extends Assert {
   private ThreadPoolTaskExecutor mockThreadPoolTaskExecutor;
   
   @Mock
-  private FileStoreRepository MockfileStoreRepo;
+  private FileStoreMetadataRepository MockfileStoreRepo;
   
   @Mock
   private MessageQueueController mockMessageQueueController;

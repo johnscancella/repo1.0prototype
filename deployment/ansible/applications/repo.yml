@@ -1,5 +1,6 @@
 ---
 - include: mongoDb.yml
+- include: rabbitMq.yml
 - include: metadataStore.yml
 - include: objectStoreMaster.yml
 - include: objectStore.yml

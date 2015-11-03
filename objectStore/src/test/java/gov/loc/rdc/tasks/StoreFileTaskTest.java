@@ -2,7 +2,7 @@ package gov.loc.rdc.tasks;
 
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.hash.SHA256Hasher;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -24,7 +24,7 @@ public class StoreFileTaskTest extends Assert implements HashPathUtils{
   public TemporaryFolder folder= new TemporaryFolder();
   
   @Mock
-  private FileStoreRepository mockFileStoreRepo;
+  private FileStoreMetadataRepository mockFileStoreRepo;
 
   @Test
   public void testStoreFile() throws Exception{

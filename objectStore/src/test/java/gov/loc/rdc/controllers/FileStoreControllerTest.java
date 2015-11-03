@@ -2,7 +2,7 @@ package gov.loc.rdc.controllers;
 
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.ResourceNotFoundException;
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +32,7 @@ public class FileStoreControllerTest extends Assert {
   public TemporaryFolder folder = new TemporaryFolder();
   
   @Mock
-  private FileStoreRepository mockFileStoreRepo;
+  private FileStoreMetadataRepository mockFileStoreRepo;
 
   @Before
   public void setup() throws Exception {

@@ -1,6 +1,6 @@
 package gov.loc.rdc.controllers;
 
-import gov.loc.rdc.repositories.FileStoreRepository;
+import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 import gov.loc.rdc.tasks.RetrieveFileExistenceTask;
 import gov.loc.rdc.tasks.RetrieveFileTask;
 import gov.loc.rdc.tasks.StoreFileTask;
@@ -32,7 +32,7 @@ public class FileStoreController implements FileStoreControllerApi{
   private static final Logger logger = LoggerFactory.getLogger(FileStoreController.class);
   
   @Autowired
-  private FileStoreRepository fileStoreRepo;
+  private FileStoreMetadataRepository fileStoreRepo;
   
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
@@ -88,7 +88,7 @@ public class FileStoreController implements FileStoreControllerApi{
     this.threadExecutor = threadExecutor;
   }
 
-  protected void setFileStoreRepo(FileStoreRepository fileStoreRepo) {
+  protected void setFileStoreRepo(FileStoreMetadataRepository fileStoreRepo) {
     this.fileStoreRepo = fileStoreRepo;
   }
 }
