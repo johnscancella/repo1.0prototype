@@ -30,6 +30,8 @@ public class RegisterRunner implements CommandLineRunner{
   
   private RestTemplate restTemplate = new RestTemplate();
   
+  public RegisterRunner(){}
+  
   //for unit tests only
   protected RegisterRunner(String masterNodeUrl, Integer retryPeriod, String myUrl, RestTemplate template){
     this.masterNodeUrl = masterNodeUrl;
