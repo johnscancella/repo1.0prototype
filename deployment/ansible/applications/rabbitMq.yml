@@ -1,0 +1,14 @@
+---
+- hosts: rabbit-mq-servers
+  tasks:
+  - include: tasks/rabbitMq/rabbitMq-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/rabbitMq/rabbitMq-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/rabbitMq/rabbitMq-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/rabbitMq/rabbitMq-Mac.yml
+#    when: ansible_os_family == "Darwin"
