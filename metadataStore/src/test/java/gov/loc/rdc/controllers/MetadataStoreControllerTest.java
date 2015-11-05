@@ -54,6 +54,7 @@ public class MetadataStoreControllerTest extends Assert{
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testFindByTags() throws Exception{
     Mockito.when(mockRepository.findByTags(Mockito.anyList())).thenReturn(Arrays.asList(MOCK_METADATA));
@@ -62,6 +63,7 @@ public class MetadataStoreControllerTest extends Assert{
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testFindByKeyValuePair() throws Exception{
     Mockito.when(mockRepository.findByKeyValuePair(Mockito.any(KeyValuePair.class))).thenReturn(Arrays.asList(MOCK_METADATA));
@@ -69,6 +71,7 @@ public class MetadataStoreControllerTest extends Assert{
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testFindByKeyValuePairs() throws Exception{
     List<KeyValuePair<String, String>> pairs = Arrays.asList(new KeyValuePair<String, String>("fooKey", "fooValue"));

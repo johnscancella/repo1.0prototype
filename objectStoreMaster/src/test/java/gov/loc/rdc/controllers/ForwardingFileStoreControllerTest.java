@@ -50,6 +50,7 @@ public class ForwardingFileStoreControllerTest extends Assert {
     mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testGetFile() throws Exception{
     Mockito.when(MockfileStoreRepo.get("foo")).thenReturn(new FileStoreData());
@@ -70,6 +71,7 @@ public class ForwardingFileStoreControllerTest extends Assert {
     Mockito.verify(mockThreadPoolTaskExecutor).execute(Mockito.any(Runnable.class));
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testFileExists() throws Exception{
     Mockito.when(MockfileStoreRepo.get("foo")).thenReturn(new FileStoreData());

@@ -79,7 +79,7 @@ public class MessageQueueController {
   @RequestMapping(value=RequestMappings.GET_FILE_STORE_QUEUE_NAME_URL, method=RequestMethod.GET)
   public String getNextQueueName(){
     queueIndex++;
-    if(queueIndex > numberOfCopies) queueIndex = 1;
+    if(queueIndex > numberOfCopies){ queueIndex = 1;}
     int index = queueIndex;
     index %= numberOfCopies;
     index++; //make sure it starts with 1 and not 0
