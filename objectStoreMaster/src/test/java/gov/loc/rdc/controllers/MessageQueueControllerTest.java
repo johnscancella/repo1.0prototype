@@ -47,4 +47,9 @@ public class MessageQueueControllerTest extends Assert{
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(RequestMappings.GET_FILE_STORE_QUEUE_NAME_URL)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     assertEquals("fileSendingQueue2", result.getResponse().getContentAsString());
   }
+  
+  @Test
+  public void testCreateChannel() throws Exception{
+    sut.createChannel("localhost");
+  }
 }
