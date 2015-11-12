@@ -3,18 +3,29 @@ package gov.loc.rdc.controllers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.rabbitmq.client.Channel;
+
+@RunWith(MockitoJUnitRunner.class)
 public class MessageQueueControllerTest extends Assert{
   private MessageQueueController sut;
   
+  @Mock
+  private Channel mockChannel;
+  
   @Before
   public void setup() throws Exception{
-    sut = new MessageQueueController(2, "localhost", 1);
+    sut = Mockito.spy(new MessageQueueController(2, "localhost", 1));
+    Mockito.doReturn(mockChannel).when(sut).createChannel(Mockito.anyString());
     sut.setup();
   }
   
