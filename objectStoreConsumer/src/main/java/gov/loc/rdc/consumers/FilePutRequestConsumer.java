@@ -43,7 +43,7 @@ public class FilePutRequestConsumer extends AbstractFileRequestConsumer implemen
   
   protected void throwErrorIfHashesDiffer(PutInfo info) throws Exception{
     String computedHash = SHA256Hasher.hash(info.getFileBytes());
-    if(info.getHash() != computedHash){
+    if(!info.getHash().equals(computedHash)){
       throw new Exception("Computed hash [" + computedHash + "] doesn't match supplied hash [" + info.getHash() + "]!");
     }
   }

@@ -43,6 +43,6 @@ public class FilePullRequestTask implements Runnable{
     ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String jsonScpInfo = writer.writeValueAsString(info);
     
-    return jsonScpInfo.getBytes();
+    return jsonScpInfo.getBytes("UTF-8");
   }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import gov.loc.rdc.controllers.RequestMappings;
 import gov.loc.rdc.tasks.RetrieveFileTask;
 
 /**
@@ -27,7 +26,7 @@ public class FileGetRequestController{
   @Value("${root_dir:/tmp}")
   private File objectStoreRootDir;
   
-  @RequestMapping(value=RequestMappings.GET_FILE_URL, method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  @RequestMapping(value="/v1/file/get/{hash}", method=RequestMethod.GET, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public DeferredResult<byte[]> getFile(@PathVariable String hash){
     DeferredResult<byte[]> result = new DeferredResult<>();
     

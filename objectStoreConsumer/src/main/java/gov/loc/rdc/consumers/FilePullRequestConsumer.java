@@ -98,14 +98,14 @@ public class FilePullRequestConsumer extends AbstractFileRequestConsumer impleme
   
   protected void move(Path tempFile, String suppliedHash) throws Exception{
     String hash = SHA256Hasher.hash(Files.newInputStream(tempFile, StandardOpenOption.READ));
-    if(suppliedHash != hash){
+    if(!suppliedHash.equals(hash)){
       throw new Exception("Supplied hash [" + suppliedHash + "] does not match computed hash [" + hash + "]!");
     }
     Path finalDestination = computeStoredPathLocation(objectStoreRootDir, hash);
     
     logger.info("Moving [{}] to [{}] on [{}].", tempFile, finalDestination, getHostName());
     Path parentDirPath = finalDestination.getParent();
-    if(!Files.exists(parentDirPath)){
+    if(parentDirPath != null && !Files.exists(parentDirPath)){
       Files.createDirectories(parentDirPath);
     }
     

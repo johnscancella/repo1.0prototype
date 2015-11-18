@@ -11,12 +11,12 @@ public class PutInfo implements Serializable{
   private final String hash;
   
   public PutInfo(@JsonProperty("fileBytes")byte[] fileBytes, @JsonProperty("hash")String hash){
-    this.fileBytes = fileBytes;
+    this.fileBytes = fileBytes.clone();
     this.hash = hash;
   }
   
   public byte[] getFileBytes() {
-    return fileBytes;
+    return fileBytes.clone();
   }
   public String getHash() {
     return hash;

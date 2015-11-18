@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.loc.rdc.controllers.RequestMappings;
-import gov.loc.rdc.controllers.VerifyIntegrityControllerApi;
 import gov.loc.rdc.errors.InternalErrorException;
 import gov.loc.rdc.errors.MissingParametersException;
 import gov.loc.rdc.hash.HashPathUtils;
@@ -30,7 +28,7 @@ import gov.loc.rdc.repositories.FileStoreMetadataRepository;
  * Responsible for continuously and programmically verifying that files haven't become corrupt. 
  */
 @RestController
-public class VerifyIntegrityController implements VerifyIntegrityControllerApi, HashPathUtils, HostUtils{
+public class VerifyIntegrityController implements HashPathUtils, HostUtils{
   private static final Logger logger = LoggerFactory.getLogger(VerifyIntegrityController.class);
   
   @Autowired
@@ -39,8 +37,7 @@ public class VerifyIntegrityController implements VerifyIntegrityControllerApi, 
   @Value("${rootDir:/tmp}")
   private File objectStoreRootDir;
   
-  @Override
-  @RequestMapping(value=RequestMappings.VERIFY_INTEGRITY_URL, method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
+  @RequestMapping(value="/v1/verifyintegrity", method={RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
   public void restfulVerifyIntegrity(@RequestParam(value="rootdir", required=false) String rootDir){
     if(rootDir == null || rootDir.equals("")){
       logger.debug("rootDir not supplied during http request. Defaulting to [{}]", objectStoreRootDir);

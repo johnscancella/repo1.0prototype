@@ -44,7 +44,7 @@ public class FilePutRequestTask implements Runnable {
     ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String jsonPutInfo = writer.writeValueAsString(info);
     
-    return jsonPutInfo.getBytes();
+    return jsonPutInfo.getBytes("UTF-8");
   }
 
 }
