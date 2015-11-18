@@ -56,5 +56,10 @@ public class FileGetRequestController{
     
     return url.toString();
   }
+
+  //for unit tests only
+  protected void setRepo(FileStoreMetadataRepository repo) {
+    this.repo = repo;
+  }
                                                                
 }

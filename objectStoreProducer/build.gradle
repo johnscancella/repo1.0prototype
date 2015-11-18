@@ -26,7 +26,7 @@ ospackage {
   packageName project.name.toLowerCase() //deb requires all lowercase package names
   release '1'
   os = LINUX // only applied to RPM
-  summary "A restful sha256 based object store"
+  summary "A restful and message based object store using SHA-256. Produces messages to be consumed by objectStoreConsumer."
   license "This software is in the Public Domain."
   url "https://github.com/loc-rdc/repo1.0prototype"
   vendor "Library of Congress"
