@@ -17,7 +17,7 @@ public class FilePullRequestTaskTest extends Assert {
   @Test
   public void testRun() throws Exception{
     Channel mockChannel = Mockito.mock(Channel.class);
-    ScpInfo scpInfo = new ScpInfo("server", 22, "/filepath");
+    ScpInfo scpInfo = new ScpInfo("server", 22, "/filepath", "hash");
     Map<String, Integer> storageTypesToCopiesMap = new HashMap<>();
     storageTypesToCopiesMap.put("longterm", 2);
     storageTypesToCopiesMap.put("access", 3);
@@ -32,9 +32,10 @@ public class FilePullRequestTaskTest extends Assert {
     String expectedString = "{\n" + 
         "  \"server\" : \"server\",\n" + 
         "  \"port\" : 22,\n" + 
-        "  \"filepath\" : \"/filepath\"\n" + 
+        "  \"filepath\" : \"/filepath\",\n" +
+        "  \"hash\" : \"hash\"\n" +
         "}";
-    ScpInfo scpInfo = new ScpInfo("server", 22, "/filepath");
+    ScpInfo scpInfo = new ScpInfo("server", 22, "/filepath", "hash");
     FilePullRequestTask sut = new FilePullRequestTask(null, null, null);
     
     byte[] returned = sut.convertToJsonByteArray(scpInfo);

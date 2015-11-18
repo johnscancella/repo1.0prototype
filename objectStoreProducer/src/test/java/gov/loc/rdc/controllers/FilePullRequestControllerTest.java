@@ -34,7 +34,7 @@ public class FilePullRequestControllerTest extends Assert {
   
   @Test
   public void testFilePullRequest() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.put("/v1/filepull/server").param("file", "/foo/bar/ham.txt")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    mockMvc.perform(MockMvcRequestBuilders.put("/v1/filepull/server/hash").param("file", "/foo/bar/ham.txt")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test

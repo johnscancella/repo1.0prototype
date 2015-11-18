@@ -2,6 +2,8 @@ rootProject.name = 'repo1.0'
 
 include 'metadataStore',
   'objectStore',
+  'objectStoreConsumer',
   'objectStoreCore',
   'objectStoreMaster',
+  'objectStoreProducer',
   'springWebAppBase'

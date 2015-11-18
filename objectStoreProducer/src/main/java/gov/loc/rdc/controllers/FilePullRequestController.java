@@ -73,9 +73,9 @@ public class FilePullRequestController {
     theChannel.basicQos(prefetchCount);
   }
 
-  @RequestMapping(value = "/v1/filepull/{server}", method = {RequestMethod.POST, RequestMethod.PUT })
-  public void filePullRequest(@PathVariable String server,@RequestParam String file) {
-    ScpInfo scpInfo = new ScpInfo(server, 22, file);
+  @RequestMapping(value = "/v1/filepull/{server}/{hash}", method = {RequestMethod.POST, RequestMethod.PUT })
+  public void filePullRequest(@PathVariable String server, @PathVariable String hash, @RequestParam String file) {
+    ScpInfo scpInfo = new ScpInfo(server, 22, file, hash);
     FilePullRequestTask task = new FilePullRequestTask(scpInfo, channel, properties.getStorageTypesToCopiesMap());
     threadExecutor.execute(task);
   }
