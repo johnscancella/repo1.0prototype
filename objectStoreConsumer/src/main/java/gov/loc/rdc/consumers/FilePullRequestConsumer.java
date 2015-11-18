@@ -53,7 +53,7 @@ public class FilePullRequestConsumer extends DefaultConsumer implements HashPath
       }
       else{
         Path tempFile = scpFile(info);
-        move(tempFile);
+        move(tempFile, info.getHash());
         fileStoreRepo.upsert(new FileStoreData(info.getHash(), getHostName()));
       }
       getChannel().basicAck(envelope.getDeliveryTag(), false);
@@ -102,8 +102,11 @@ public class FilePullRequestConsumer extends DefaultConsumer implements HashPath
     return scpCommand;
   }
   
-  protected void move(Path tempFile) throws Exception{
+  protected void move(Path tempFile, String suppliedHash) throws Exception{
     String hash = SHA256Hasher.hash(Files.newInputStream(tempFile, StandardOpenOption.READ));
+    if(suppliedHash != hash){
+      throw new Exception("Supplied hash [" + suppliedHash + "] does not match computed hash [" + hash + "]!");
+    }
     Path finalDestination = computeStoredPathLocation(objectStoreRootDir, hash);
     
     logger.info("Moving [{}] to [{}] on [{}].", tempFile, finalDestination, getHostName());
