@@ -33,7 +33,7 @@ public class FilePutRequestController extends AbstractRequestController{
   }
 
   @RequestMapping(value = "/v1/file/put/{hash}", method = {RequestMethod.POST, RequestMethod.PUT })
-  public void storeFile(@RequestParam(value="file") MultipartFile file, @PathVariable String hash) throws Exception{
+  public void filePutRequest(@RequestParam(value="file") MultipartFile file, @PathVariable String hash) throws Exception{
     PutInfo putInfo = new PutInfo(file.getBytes(), hash);
     FilePutRequestTask task = new FilePutRequestTask(channel, QUEUE_NAMES, putInfo);
     threadExecutor.execute(task);
