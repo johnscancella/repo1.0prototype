@@ -47,7 +47,7 @@ public class FileStoreMongoRepositoryDriver implements FileStoreMetadataReposito
     Query query = new Query();
     query.addCriteria(Criteria.where("servers").in(server));
     
-    List<FileStoreData> returnedData = mongoTemplate.findAll(FileStoreData.class);
+    List<FileStoreData> returnedData = mongoTemplate.find(query, FileStoreData.class);
     
     if(returnedData != null){
       hashes = new ArrayList<>(returnedData.size());
@@ -57,5 +57,10 @@ public class FileStoreMongoRepositoryDriver implements FileStoreMetadataReposito
     }
     
     return hashes;
+  }
+  
+  //used for testing only
+  protected void setMongoTemplate(MongoTemplate mongoTemplate) {
+    this.mongoTemplate = mongoTemplate;
   }
 }

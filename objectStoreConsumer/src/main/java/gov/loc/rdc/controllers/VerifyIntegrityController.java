@@ -121,4 +121,9 @@ public class VerifyIntegrityController implements HashPathUtils, HostUtils{
   protected void setObjectStoreRootDir(File objectStoreRootDir) {
     this.objectStoreRootDir = objectStoreRootDir;
   }
+
+  //for testing only
+  protected void setFileStoreRepo(FileStoreMetadataRepository fileStoreRepo) {
+    this.fileStoreRepo = fileStoreRepo;
+  }
 }

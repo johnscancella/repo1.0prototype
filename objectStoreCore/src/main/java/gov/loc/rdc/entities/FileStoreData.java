@@ -2,6 +2,7 @@ package gov.loc.rdc.entities;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -19,6 +20,22 @@ public class FileStoreData {
   public FileStoreData(String hash, String ... servers){
     this.hash = hash;
     this.servers = new HashSet<>(Arrays.asList(servers));
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(hash, servers);
+  }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (!(obj instanceof FileStoreData))
+      return false;
+    FileStoreData other = (FileStoreData) obj;
+    return Objects.equals(hash, other.getHash()) && Objects.equals(servers, other.getServers());
   }
   
   public String getHash() {
