@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
 
-import gov.loc.rdc.consumers.FilePullRequestConsumer;
+import gov.loc.rdc.consumers.FilePutRequestConsumer;
 import gov.loc.rdc.hash.HashPathUtils;
 import gov.loc.rdc.host.HostUtils;
 
 @Component
-public class FilePullRequestMessageHandler extends AbstractFileRequest implements CommandLineRunner, HashPathUtils, HostUtils {
+public class FilePutRequestMessageHandler extends AbstractFileRequest implements CommandLineRunner, HashPathUtils, HostUtils {
   
-  @Value("${scpqueue.name}")
+  @Value("${putqueue.name}")
   protected String queueName;
 
   @Override
@@ -24,7 +24,7 @@ public class FilePullRequestMessageHandler extends AbstractFileRequest implement
   }
 
   protected void handleFilePullRequest(Channel storeFileChannel, String queue) throws Exception {
-    Consumer consumer = new FilePullRequestConsumer(storeFileChannel, objectStoreRootDir, fileStoreRepo);
+    Consumer consumer = new FilePutRequestConsumer(storeFileChannel, objectStoreRootDir, fileStoreRepo);
     boolean autoAck=false;
     storeFileChannel.basicConsume(queue, autoAck, consumer);
   }

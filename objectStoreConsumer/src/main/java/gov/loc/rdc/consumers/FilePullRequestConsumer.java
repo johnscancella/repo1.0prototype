@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 import gov.loc.rdc.domain.ScpInfo;
@@ -28,20 +27,15 @@ import gov.loc.rdc.hash.SHA256Hasher;
 import gov.loc.rdc.host.HostUtils;
 import gov.loc.rdc.repositories.FileStoreMetadataRepository;
 
-public class FilePullRequestConsumer extends DefaultConsumer implements HashPathUtils, HostUtils {
+public class FilePullRequestConsumer extends AbstractFileRequestConsumer implements HashPathUtils, HostUtils {
   private static final Logger logger = LoggerFactory.getLogger(FilePullRequestConsumer.class);
   private static final String username = System.getProperty("user.name");
   private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
   private static final String SSH_KEY_FILE = "~/.ssh/id_rsa";
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS");
   
-  private final File objectStoreRootDir;
-  private final FileStoreMetadataRepository fileStoreRepo;
-  
   public FilePullRequestConsumer(Channel channel, File objectStoreRootDir, FileStoreMetadataRepository fileStoreRepo) {
-    super(channel);
-    this.objectStoreRootDir = objectStoreRootDir;
-    this.fileStoreRepo = fileStoreRepo;
+    super(channel, objectStoreRootDir, fileStoreRepo);
   }
 
   @Override

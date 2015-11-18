@@ -5,25 +5,20 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import gov.loc.rdc.domain.ScpInfo;
-import gov.loc.rdc.tasks.FilePullRequestTask;
+import gov.loc.rdc.domain.PutInfo;
+import gov.loc.rdc.tasks.FilePutRequestTask;
 
-/**
- * Manages pull requests for files.
- */
 @RestController
-public class FilePullRequestController extends AbstractRequestController{
-  private static final Logger logger = LoggerFactory.getLogger(FilePullRequestController.class);
-  private static final List<String> QUEUE_NAMES = Arrays.asList("scpLongTerm", "scpAccess");
-
+public class FilePutRequestController extends AbstractRequestController{
+  private static final List<String> QUEUE_NAMES = Arrays.asList("putLongTerm", "putAccess");
+  
   @PostConstruct
   protected void setup(){
     try {
@@ -37,10 +32,10 @@ public class FilePullRequestController extends AbstractRequestController{
     }
   }
 
-  @RequestMapping(value = "/v1/file/pull/{server}/{hash}", method = {RequestMethod.POST, RequestMethod.PUT })
-  public void filePullRequest(@PathVariable String server, @PathVariable String hash, @RequestParam String file) {
-    ScpInfo scpInfo = new ScpInfo(server, 22, file, hash);
-    FilePullRequestTask task = new FilePullRequestTask(scpInfo, channel, QUEUE_NAMES);
+  @RequestMapping(value = "/v1/file/put/{hash}", method = {RequestMethod.POST, RequestMethod.PUT })
+  public void storeFile(@RequestParam(value="file") MultipartFile file, @PathVariable String hash) throws Exception{
+    PutInfo putInfo = new PutInfo(file.getBytes(), hash);
+    FilePutRequestTask task = new FilePutRequestTask(channel, QUEUE_NAMES, putInfo);
     threadExecutor.execute(task);
   }
 }
