@@ -1,6 +1,6 @@
 package gov.loc.rdc.tasks;
 
-import java.util.Map;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,23 +14,23 @@ import gov.loc.rdc.domain.ScpInfo;
 public class FilePullRequestTask implements Runnable{
   private static final Logger logger = LoggerFactory.getLogger(FilePullRequestTask.class);
   private static final String DEFAULT_EXCHANGE = "";
+  private static final int NUMBER_OF_COPIES = 3;
   private final Channel channel;
   private final ScpInfo scpInfo;
-  private final Map<String, Integer> storageTypesToCopiesMap;
+  private final List<String> queueNames;
   
-  public FilePullRequestTask(ScpInfo scpInfo, Channel channel, Map<String, Integer> storageTypesToCopiesMap){
+  public FilePullRequestTask(ScpInfo scpInfo, Channel channel, List<String> queueNames){
     this.scpInfo = scpInfo;
     this.channel = channel;
-    this.storageTypesToCopiesMap = storageTypesToCopiesMap;
+    this.queueNames = queueNames;
   }
   
   public void run() {
     try {
-      for(String storageType : storageTypesToCopiesMap.keySet()){
+      for(String storageType : queueNames){
         byte[] serializedScpInfo = convertToJsonByteArray(scpInfo);
-        int numberOfCopies = storageTypesToCopiesMap.get(storageType);
-        for(int copy=1; copy<=numberOfCopies; copy++){
-          logger.info("Sending number [{}] of [{}] file pull requests to [{}] storage queue.", copy, numberOfCopies, storageType);
+        for(int copy=1; copy<=NUMBER_OF_COPIES; copy++){
+          logger.info("Sending number [{}] of [{}] file pull requests to [{}] storage queue.", copy, NUMBER_OF_COPIES, storageType);
           channel.basicPublish(DEFAULT_EXCHANGE, storageType, null, serializedScpInfo);
         }
       }

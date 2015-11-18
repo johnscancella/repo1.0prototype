@@ -1,7 +1,6 @@
 package gov.loc.rdc.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,13 +17,10 @@ public class FilePullRequestTaskTest extends Assert {
   public void testRun() throws Exception{
     Channel mockChannel = Mockito.mock(Channel.class);
     ScpInfo scpInfo = new ScpInfo("server", 22, "/filepath", "hash");
-    Map<String, Integer> storageTypesToCopiesMap = new HashMap<>();
-    storageTypesToCopiesMap.put("longterm", 2);
-    storageTypesToCopiesMap.put("access", 3);
     
-    FilePullRequestTask sut = new FilePullRequestTask(scpInfo, mockChannel, storageTypesToCopiesMap);
+    FilePullRequestTask sut = new FilePullRequestTask(scpInfo, mockChannel, Arrays.asList("scpLongTerm", "scpAccess"));
     sut.run();
-    Mockito.verify(mockChannel, Mockito.times(5)).basicPublish(Mockito.anyString(), Mockito.anyString(), Mockito.any(BasicProperties.class), Mockito.any(byte[].class));
+    Mockito.verify(mockChannel, Mockito.times(6)).basicPublish(Mockito.anyString(), Mockito.anyString(), Mockito.any(BasicProperties.class), Mockito.any(byte[].class));
   }
   
   @Test
