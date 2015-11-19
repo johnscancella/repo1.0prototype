@@ -26,12 +26,27 @@ prototype java implementation of the repo 1.0 re-write.
 * RabbitMq (for message passing)
 * MongoDb
 
-## Quickstart
-To build run `gradle buildRpm`
-This will create multiple `.rpm` files that can then be installed on your system of choice
-Or you can run a project locally by changing into the directory of the project you want to deploy and running `gradle bootRun`
+## Eclipse IDE
+To generate Eclipse IDE projects run `gradle eclipse` from the root directory
 
-### Public domain
+## Building
+Gradle commands run from the root directory (i.e. the one where this file lives) are applied to all projects. So if you run `gradle build` it will run the build command on all the subprojects. Conversely, if you run the build in a project directory it will only build that project (and it's dependencies).
+Built components (rpm, deb, zip, etc.) are located in each projects build folder.
+For more general info about gradle and how it works see [gradle userguide](https://docs.gradle.org/current/userguide/userguide.html)
+
+### Building with a specific version
+To build version specific components (rpm, deb, zip, etc.) add `-Pversion=FOO_VERSION` where `FOO_VERSION` is replaced with the actual version you want. It is string based so `[a-zA-Z0-9.-_]` is allowed.
+
+### Building an RPM package
+run `gradle buildRpm`
+
+### Building an DEB package
+run `gradle buildDeb`
+
+### Building an Zip package
+run `gradle distZip`
+
+## Public domain
 This project is in the worldwide [public domain](LICENSE.md).
 
 > This project is in the public domain within the United States, and copyright and related rights in the work world wide are waived through the [CC0 1.0 universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
