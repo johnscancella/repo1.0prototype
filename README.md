@@ -30,3 +30,12 @@ prototype java implementation of the repo 1.0 re-write.
 To build run `gradle buildRpm`
 This will create multiple `.rpm` files that can then be installed on your system of choice
 Or you can run a project locally by changing into the directory of the project you want to deploy and running `gradle bootRun`
+
+### Public domain
+This project is in the worldwide [public domain](LICENSE.md).
+
+> This project is in the public domain within the United States, and copyright and related rights in the work world wide are waived through the [CC0 1.0 universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+>
+> All contributions to this project will be released under the CC0
+>dedication. By submitting a pull request, you are agreeing to comply
+>with this waiver of copyright interest.
