@@ -1,0 +1,14 @@
+---
+- hosts: objectStoreProducer-servers
+  tasks:
+  - include: tasks/objectStoreProducer/objectStoreProducer-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/objectStoreProducer/objectStoreProducer-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/objectStoreProducer/objectStoreProducer-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/objectStoreProducer/objectStoreProducer-Mac.yml
+#    when: ansible_os_family == "Darwin"

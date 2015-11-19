@@ -6,10 +6,10 @@
 install_version=latest
 artifactory_url=http://140.147.214.66:8081/artifactory/repo
 
-[objectStore-servers]
+[objectStoreConsumer-servers]
 localhost ansible_connection=local
 
-[objectStoreMaster-servers]
+[objectStoreProducer-servers]
 localhost ansible_connection=local
 
 [metadataStore-servers]

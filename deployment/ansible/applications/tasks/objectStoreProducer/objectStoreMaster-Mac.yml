@@ -1,0 +1,13 @@
+---
+- name: download objectStoreMaster from artifact repo
+  maven_artifact: repository_url={{ artifactory_url }} group_id=gov.loc artifact_id=objectStoreProducer version={{ install_version }} extension=zip dest=/tmp
+  register: artifact
+
+- name: install objectStoreProducer from zip
+  unarchive: copy=no dest=/opt src={{ artifact.dest }}
+
+- name: delete tmp rpm file
+  file: path={{ artifact.dest }}  state=absent
+
+  - name: run objectStoreProducer
+  shell: /opt/objectStoreProducer/bin/objectStoreProducer

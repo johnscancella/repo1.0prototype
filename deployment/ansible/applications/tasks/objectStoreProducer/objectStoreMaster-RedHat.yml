@@ -1,0 +1,13 @@
+---
+- name: download objectStoreProducer from artifact repo
+  maven_artifact: repository_url={{ artifactory_url }} group_id=gov.loc artifact_id=objectStoreProducer version={{ install_version }} extension=rpm dest=/tmp
+  register: artifact
+
+- name: install objectStoreProducer from rpm
+  yum: name={{ artifact.dest }} state=present
+
+- name: delete tmp rpm file
+  file: path={{ artifact.dest }}  state=absent
+
+  - name: run objectStoreProducer
+  shell: /opt/loc-rdc/objectStoreProducer/bin/objectStoreProducer

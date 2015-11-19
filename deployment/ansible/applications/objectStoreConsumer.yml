@@ -1,0 +1,14 @@
+---
+- hosts: objectStoreConsumer-servers
+  tasks:
+  - include: tasks/objectStoreConsumer/objectStoreConsumer-RedHat.yml
+    when: ansible_os_family == "RedHat"
+
+#  - include: tasks/objectStoreConsumer/objectStoreConsumer-Debian.yml
+#    when: ansible_os_family == "Debian"
+
+#  - include: tasks/objectStoreConsumer/objectStoreConsumer-Windows.yml
+#    when: ansible_os_family == "Windows"
+
+#  - include: tasks/objectStoreConsumer/objectStoreConsumer-Mac.yml
+#    when: ansible_os_family == "Darwin"
