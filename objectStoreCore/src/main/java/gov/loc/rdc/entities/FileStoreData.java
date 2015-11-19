@@ -28,12 +28,9 @@ public class FileStoreData {
   }
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof FileStoreData))
-      return false;
+    if (this == obj){ return true; }
+    if (obj == null){ return false; }
+    if (!(obj instanceof FileStoreData)){ return false; }
     FileStoreData other = (FileStoreData) obj;
     return Objects.equals(hash, other.getHash()) && Objects.equals(servers, other.getServers());
   }
