@@ -3,6 +3,8 @@ buildscript {
   dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE") }
 }
 plugins { id "nebula.os-package" version "2.2.6" }
+//git properties plugin works with spring-boot-starter-actuator to list git info in the info endpoint
+plugins { id "com.gorylenko.gradle-git-properties" version "1.4.6" }
 
 apply from: '../springboot.gradle'
 apply plugin: 'os-package'
