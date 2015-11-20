@@ -43,14 +43,14 @@ public class MetadataStoreControllerTest extends Assert{
   @Test
   public void testFindByHash() throws Exception{
     Mockito.when(mockRepository.findByHash("ABC123")).thenReturn(MOCK_METADATA);
-    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/sha256/ABC123"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/v1/metadata/search/hash/ABC123"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test
   public void testFindByTag() throws Exception{
     Mockito.when(mockRepository.findByTag("foo")).thenReturn(Arrays.asList(MOCK_METADATA));
-    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tag/foo"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/v1/metadata/search/tag/foo"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
@@ -58,7 +58,7 @@ public class MetadataStoreControllerTest extends Assert{
   @Test
   public void testFindByTags() throws Exception{
     Mockito.when(mockRepository.findByTags(Mockito.anyList())).thenReturn(Arrays.asList(MOCK_METADATA));
-    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/tags")
+    mockMvc.perform(MockMvcRequestBuilders.get("/v1/metadata/search/tags")
         .param("tags", "fooTag", "barTag"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
@@ -67,7 +67,7 @@ public class MetadataStoreControllerTest extends Assert{
   @Test
   public void testFindByKeyValuePair() throws Exception{
     Mockito.when(mockRepository.findByKeyValuePair(Mockito.any(KeyValuePair.class))).thenReturn(Arrays.asList(MOCK_METADATA));
-    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta//key/fooKey/value/fooValue"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/v1/metadata/search/key/fookey/value/foovalue"))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
@@ -76,26 +76,26 @@ public class MetadataStoreControllerTest extends Assert{
   public void testFindByKeyValuePairs() throws Exception{
     List<KeyValuePair<String, String>> pairs = Arrays.asList(new KeyValuePair<String, String>("fooKey", "fooValue"));
     Mockito.when(mockRepository.findByKeyValuePairs(Mockito.anyList())).thenReturn(Arrays.asList(MOCK_METADATA));
-    mockMvc.perform(MockMvcRequestBuilders.get("/searchmeta/keyvaluepairs")
+    mockMvc.perform(MockMvcRequestBuilders.get("/v1/metadata/search/keyvaluepairs/json")
         .param("keyValuePairsAsJson", KeyValueJsonConverter.convertToJson(pairs)))
     .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test
   public void testDeleteMetadata() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.delete("/deletemeta/sha256/ABC123"))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/v1/metadata/delete/ABC123"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test
   public void testDeleteTag() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.delete("/deletemeta/sha256/ABC123/deletetag/fooTag"))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/v1/metadata/delete/tag/footag/fromhash/foohash"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test
   public void testDeleteKeyValuePair() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.delete("/deletemeta/sha256/ABC123/deletekeyvalue/fooKey/fooValue"))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/v1/metadata/delete/key/fookey/value/foovalue/fromhash/foohash"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
@@ -103,7 +103,7 @@ public class MetadataStoreControllerTest extends Assert{
   public void testStoreMetadata() throws Exception{
     List<KeyValuePair<String, String>> pairs = Arrays.asList(new KeyValuePair<String, String>("fooKey", "fooValue"));
     
-    mockMvc.perform(MockMvcRequestBuilders.put("/storemeta/sha256/ABC123")
+    mockMvc.perform(MockMvcRequestBuilders.put("/v1/metadata/store/hash/ABC123")
         .param("tags", "tag1", "tag2", "tag3")
         .param("keyValuePairsAsJson", KeyValueJsonConverter.convertToJson(pairs)))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
@@ -111,13 +111,13 @@ public class MetadataStoreControllerTest extends Assert{
   
   @Test
   public void testAddTag() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.put("/storemeta/sha256/ABC123/addtag/fooTag"))
+    mockMvc.perform(MockMvcRequestBuilders.put("/v1/metadata/add/tag/footag/tohash/ABC123"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   
   @Test
   public void testAddKeyValue() throws Exception{
-    mockMvc.perform(MockMvcRequestBuilders.put("/storemeta/sha256/ABC123/addkeyvalue/fooKey/fooValue"))
+    mockMvc.perform(MockMvcRequestBuilders.put("/v1/metadata/add/key/fookey/value/foovalue/tohash/ABC123"))
         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
   }
   

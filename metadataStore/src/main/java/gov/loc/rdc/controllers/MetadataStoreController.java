@@ -32,26 +32,13 @@ import org.springframework.web.context.request.async.DeferredResult;
  */
 @RestController
 public class MetadataStoreController {
-  private static final String BASE_DELETE_URL = "/deletemeta/{hash}";
-  private static final String FIND_BY_BASE_URL = "/searchmeta";
-  private static final String FIND_BY_HASH_URL = FIND_BY_BASE_URL + "/{hash}";
-  private static final String FIND_BY_TAG_URL = FIND_BY_BASE_URL + "/tag/{tag}";
-  private static final String FIND_BY_TAGS_URL = FIND_BY_BASE_URL + "/tags";
-  private static final String FIND_BY_KEY_VALUE_PAIR_URL = FIND_BY_BASE_URL + "/key/{key}/value/{value}";
-  private static final String FIND_BY_KEY_VALUE_PAIRS_URL = FIND_BY_BASE_URL + "/keyvaluepairs";
-  private static final String DELETE_TAG_URL = BASE_DELETE_URL + "/deletetag/{tag}";
-  private static final String DELETE_KEY_VALUE_URL = BASE_DELETE_URL + "/deletekeyvalue/{key}/{value}";
-  private static final String BASE_STORE_URL = "/storemeta/{hash}";
-  private static final String ADD_TAG_URL = BASE_STORE_URL + "/addtag/{tag}";
-  private static final String ADD_KEY_VALUE_URL = BASE_STORE_URL + "/addkeyvalue/{key}/{value}";
-
   @Autowired
   private MetadataRepository repository;
   
   @Resource(name="threadPoolTaskExecutor")
   private ThreadPoolTaskExecutor threadExecutor;
   
-  @RequestMapping(value=FIND_BY_HASH_URL, method=RequestMethod.GET)
+  @RequestMapping(value="/v1/metadata/search/hash/{hash}", method=RequestMethod.GET)
   public DeferredResult<Metadata> findByHash(@PathVariable String hash){
     DeferredResult<Metadata> result = new DeferredResult<>();
     
@@ -61,7 +48,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=FIND_BY_TAG_URL, method=RequestMethod.GET)
+  @RequestMapping(value="/v1/metadata/search/tag/{tag}", method=RequestMethod.GET)
   public DeferredResult<List<Metadata>> findBytag(@PathVariable String tag){
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
@@ -71,7 +58,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=FIND_BY_TAGS_URL, method=RequestMethod.GET)
+  @RequestMapping(value="/v1/metadata/search/tags", method=RequestMethod.GET)
   public DeferredResult<List<Metadata>> findBytags(@RequestParam List<String> tags){
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
@@ -82,7 +69,7 @@ public class MetadataStoreController {
     return result; 
   }
   
-  @RequestMapping(value=FIND_BY_KEY_VALUE_PAIR_URL, method=RequestMethod.GET)
+  @RequestMapping(value="/v1/metadata/search/key/{key}/value/{value}", method=RequestMethod.GET)
   public DeferredResult<List<Metadata>> findByKeyValuePair(@PathVariable String key, @PathVariable String value){
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
@@ -92,7 +79,7 @@ public class MetadataStoreController {
     return result; 
   }
   
-  @RequestMapping(value=FIND_BY_KEY_VALUE_PAIRS_URL, method=RequestMethod.GET)
+  @RequestMapping(value="/v1/metadata/search/keyvaluepairs/json", method=RequestMethod.GET)
   public DeferredResult<List<Metadata>> findByKeyValuePairs(@RequestParam String keyValuePairsAsJson){
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
     
@@ -102,12 +89,12 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=BASE_DELETE_URL, method=RequestMethod.DELETE)
+  @RequestMapping(value="/v1/metadata/delete/{hash}", method=RequestMethod.DELETE)
   public void deleteMetadata(@PathVariable String hash){
     
   }
   
-  @RequestMapping(value=DELETE_TAG_URL, method=RequestMethod.DELETE)
+  @RequestMapping(value="/v1/metadata/delete/tag/{tag}/fromhash/{hash}", method=RequestMethod.DELETE)
   public DeferredResult<Boolean> deleteTag(@PathVariable String hash, @PathVariable String tag){
     DeferredResult<Boolean> result = new DeferredResult<>();
     
@@ -117,7 +104,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=DELETE_KEY_VALUE_URL, method=RequestMethod.DELETE)
+  @RequestMapping(value="/v1/metadata/delete/key/{key}/value/{value}/fromhash/{hash}", method=RequestMethod.DELETE)
   public DeferredResult<Boolean> deleteKeyValue(@PathVariable String hash, 
                              @PathVariable String key, 
                              @PathVariable String value){
@@ -129,7 +116,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=BASE_STORE_URL, method={RequestMethod.POST, RequestMethod.PUT})
+  @RequestMapping(value="/v1/metadata/store/hash/{hash}", method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<Boolean> storeMetadata(@PathVariable String hash,
                             @RequestParam Set<String> tags,
                             @RequestParam String keyValuePairsAsJson){
@@ -142,7 +129,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=ADD_TAG_URL, method={RequestMethod.POST, RequestMethod.PUT})
+  @RequestMapping(value="/v1/metadata/add/tag/{tag}/tohash/{hash}", method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<Boolean> addTag(@PathVariable String hash, @PathVariable String tag){
     DeferredResult<Boolean> result = new DeferredResult<>();
     
@@ -152,7 +139,7 @@ public class MetadataStoreController {
     return result;
   }
   
-  @RequestMapping(value=ADD_KEY_VALUE_URL, method={RequestMethod.POST, RequestMethod.PUT})
+  @RequestMapping(value="/v1/metadata/add/key/{key}/value/{value}/tohash/{hash}", method={RequestMethod.POST, RequestMethod.PUT})
   public DeferredResult<Boolean> addKeyValue(@PathVariable String hash, 
                           @PathVariable String key, 
                           @PathVariable String value){

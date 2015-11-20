@@ -105,4 +105,13 @@ public class MetadataMongoRepositoryDriverTest extends Assert {
     sut.saveKeyValuePairToHash(keyValuePair, "hash");
     Mockito.verify(mockMongoTemplate).save(expectedData);
   }
+  
+  @Test
+  public void testSaveTagToHash(){
+    Metadata expectedData = new Metadata("hash", new HashSet<>(), new ArrayList<>());
+    expectedData.getTags().add("tag");
+    
+    sut.saveTagToHash("tag", "hash");
+    Mockito.verify(mockMongoTemplate).save(expectedData);
+  }
 }
