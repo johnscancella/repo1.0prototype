@@ -16,15 +16,15 @@ public class StoreMetadataTask extends AbstractMetadataStoreTask implements Runn
   private final String keyValuePairsAsJson;
   private final DeferredResult<Boolean> result;
 
-  public StoreMetadataTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String algorithm, final String hash, final Set<String> tags, final String keyValuePairsAsJson) {
-    super(repository, algorithm, hash);
+  public StoreMetadataTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String hash, final Set<String> tags, final String keyValuePairsAsJson) {
+    super(repository, hash);
     this.result = result;
     this.tags = tags;
     this.keyValuePairsAsJson = keyValuePairsAsJson;
   }
 
   @Override
-  protected void doTaskWork() {
+  public void run() {
     try {
       List<KeyValuePair<String, String>> keyValuePairs = KeyValueJsonConverter.convertToPairs(keyValuePairsAsJson);
       Metadata data = new Metadata(hash, tags, keyValuePairs);

@@ -29,7 +29,7 @@ public class MetadataStoreControllerTest extends Assert{
   @Mock
   private MetadataRepository mockRepository;
   
-  private static final Metadata MOCK_METADATA = new Metadata(); 
+  private static final Metadata MOCK_METADATA = new Metadata("hash"); 
   
   @Before
   public void setup(){

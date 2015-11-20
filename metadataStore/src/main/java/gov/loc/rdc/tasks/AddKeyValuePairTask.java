@@ -1,20 +1,22 @@
 package gov.loc.rdc.tasks;
 
+import org.springframework.web.context.request.async.DeferredResult;
+
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.repositories.MetadataRepository;
 
-import org.springframework.web.context.request.async.DeferredResult;
-
-public class AddKeyValuePairTask extends AbstractKeyValuePairTask implements Runnable {
+public class AddKeyValuePairTask extends AbstractMetadataStoreTask implements Runnable {
+  private final KeyValuePair<String, String> pair;
   private final DeferredResult<Boolean> result; 
   
-  public AddKeyValuePairTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String algorithm, final String hash,final KeyValuePair<String, String> pair) {
-    super(repository, algorithm, hash, pair);
+  public AddKeyValuePairTask(final DeferredResult<Boolean> result, final MetadataRepository repository, final String hash,final KeyValuePair<String, String> pair) {
+    super(repository, hash);
     this.result = result;
+    this.pair = pair;
   }
 
   @Override
-  protected void doTaskWork() {
+  public void run() {
     logger.debug("Adding key value pair [{}] to hash [{}]", pair, hash);
     repository.saveKeyValuePairToHash(pair, hash);
     result.setResult(true);

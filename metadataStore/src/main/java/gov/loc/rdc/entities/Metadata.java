@@ -18,11 +18,6 @@ public class Metadata {
   private Set<String> tags;
   private List<KeyValuePair<String, String>> keyValuePairs;
   
-  public Metadata() {
-    this.hash = "NO HASH";
-    this.tags = new HashSet<>();
-    this.keyValuePairs = new ArrayList<>();
-  }
   public Metadata(String hash){
     this.hash = hash;
     this.tags = new HashSet<>();

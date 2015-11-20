@@ -3,6 +3,7 @@ package gov.loc.rdc.repositories;
 import gov.loc.rdc.entities.KeyValuePair;
 import gov.loc.rdc.entities.Metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("hash").is(hash));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
     
+    if(metadata == null){
+      metadata = new Metadata(hash);
+    }
+    
     return metadata;
   }
 
@@ -47,6 +52,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("keyValuePairs").in(keyValuePair));
     List<Metadata> metadatas = mongoTemplate.find(query, Metadata.class);
     
+    if(metadatas == null){
+      metadatas = new ArrayList<>();
+    }
+    
     return metadatas;
   }
   
@@ -56,6 +65,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("tags").in(tags));
     List<Metadata> metadatas = mongoTemplate.find(query, Metadata.class);
     
+    if(metadatas == null){
+      metadatas = new ArrayList<>();
+    }
+    
     return metadatas;
   }
 
@@ -64,6 +77,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     Query query = new Query();
     query.addCriteria(Criteria.where("keyValuePairs").in(keyValuePairs));
     List<Metadata> metadatas = mongoTemplate.find(query, Metadata.class);
+    
+    if(metadatas == null){
+      metadatas = new ArrayList<>();
+    }
     
     return metadatas;
   }
@@ -81,8 +98,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("hash").is(hash).and("tags").in(tag));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
     
-    metadata.getTags().remove(tag);
-    mongoTemplate.save(metadata);
+    if(metadata != null){
+      metadata.getTags().remove(tag);
+      mongoTemplate.save(metadata);
+    }
   }
   
   @Override
@@ -91,8 +110,10 @@ public class MetadataMongoRepositoryDriver implements MetadataRepository {
     query.addCriteria(Criteria.where("hash").is(hash));
     Metadata metadata = mongoTemplate.findOne(query, Metadata.class);
     
-    metadata.getKeyValuePairs().remove(keyValue);
-    mongoTemplate.save(metadata);
+    if(metadata != null){
+      metadata.getKeyValuePairs().remove(keyValue);
+      mongoTemplate.save(metadata);
+    }
   }
 
   @Override

@@ -1,37 +1,29 @@
 package gov.loc.rdc.tasks;
 
-import gov.loc.rdc.entities.KeyValuePair;
-import gov.loc.rdc.entities.Metadata;
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class FindByKeyValuePairTaskTest extends TaskTest {
-  private Metadata data;
-  
-  @Before
-  public void setup(){
-    clearDatabase();
-    
-    tags = new HashSet<>();
-    keyValuePairs = new ArrayList<>();
-    keyValuePairs.add(new KeyValuePair<String, String>(KEY1, VALUE1));
-    
-    data = new Metadata(HASH, tags, keyValuePairs);
-    repository.save(data);
-  }
+import gov.loc.rdc.entities.KeyValuePair;
+import gov.loc.rdc.entities.Metadata;
+
+public class FindByKeyValuePairTaskTest extends AbstractTaskTest {
   
   @SuppressWarnings("unchecked")
   @Test
   public void testFindByKeyValuePair() {
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
-    FindByKeyValuePairTask sut = new FindByKeyValuePairTask(result, repository, new KeyValuePair<String, String>(KEY1, VALUE1));
+    KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");
+    FindByKeyValuePairTask sut = new FindByKeyValuePairTask(result, mockRepository, pair);
+    Metadata data = new Metadata("hash", new HashSet<>(), Arrays.asList(pair));
+    Mockito.when(mockRepository.findByKeyValuePair(pair)).thenReturn(Arrays.asList(data));
+    
     sut.run();
+    
     assertTrue(result.getResult() instanceof List<?>);
     List<Metadata> typedResult = (List<Metadata>) result.getResult();
     assertEquals(1, typedResult.size());
@@ -42,7 +34,7 @@ public class FindByKeyValuePairTaskTest extends TaskTest {
   @Test
   public void testDataNotFound(){
     DeferredResult<List<Metadata>> result = new DeferredResult<>();
-    FindByKeyValuePairTask sut = new FindByKeyValuePairTask(result, repository, new KeyValuePair<String, String>("nonexistingKey", "nonexistingValue"));
+    FindByKeyValuePairTask sut = new FindByKeyValuePairTask(result, mockRepository, new KeyValuePair<String, String>("nonexistingKey", "nonexistingValue"));
     sut.run();
     assertTrue(result.getResult() instanceof List<?>);
     List<Metadata> typedResult = (List<Metadata>) result.getResult();

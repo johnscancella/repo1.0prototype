@@ -18,8 +18,7 @@ dependencies {
 
   testCompile 'junit:junit:4.12',
       'org.springframework.boot:spring-boot-starter-test:1.2.5.RELEASE',
-      'org.mongodb:mongo-java-driver:3.0.2',
-      'com.github.fakemongo:fongo:2.0.2'
+      'org.mongodb:mongo-java-driver:3.0.2'
 }
 
 //package as rpm or deb

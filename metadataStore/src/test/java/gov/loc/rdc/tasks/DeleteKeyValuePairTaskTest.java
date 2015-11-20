@@ -1,44 +1,18 @@
 package gov.loc.rdc.tasks;
 
-import gov.loc.rdc.entities.KeyValuePair;
-import gov.loc.rdc.entities.Metadata;
-import gov.loc.rdc.errors.UnsupportedAlgorithmException;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.context.request.async.DeferredResult;
 
-public class DeleteKeyValuePairTaskTest extends TaskTest {
-  @Before
-  public void setup(){
-    clearDatabase();
-    
-    tags = new HashSet<>();
-    keyValuePairs = new ArrayList<>();
-    keyValuePairs.add(new KeyValuePair<String, String>(KEY1, VALUE1));
-    
-    Metadata data = new Metadata(HASH, tags, keyValuePairs);
-    repository.save(data);
-  }
+import gov.loc.rdc.entities.KeyValuePair;
+
+public class DeleteKeyValuePairTaskTest extends AbstractTaskTest {
   
   @Test
   public void testDeleteKeyValuePair(){
     DeferredResult<Boolean> result = new DeferredResult<>();
-    KeyValuePair<String, String> pair = new KeyValuePair<String, String>(KEY1, VALUE1);
-    DeleteKeyValuePairTask sut = new DeleteKeyValuePairTask(result, repository, ALGORITHM, HASH, pair);
+    KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");
+    DeleteKeyValuePairTask sut = new DeleteKeyValuePairTask(result, mockRepository, "hash", pair);
     sut.run();
     assertTrue(result.getResult() == Boolean.TRUE);
-  }
-  
-  @Test
-  public void testAlgorithmNotSupported(){
-    DeferredResult<Boolean> result = new DeferredResult<>();
-    KeyValuePair<String, String> pair = new KeyValuePair<String, String>(KEY1, VALUE1);
-    DeleteKeyValuePairTask sut = new DeleteKeyValuePairTask(result, repository, BAD_ALGORITHM, HASH, pair);
-    sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
 }

@@ -1,56 +1,38 @@
 package gov.loc.rdc.tasks;
 
-import gov.loc.rdc.entities.KeyValuePair;
-import gov.loc.rdc.errors.JsonParamParseFailException;
-import gov.loc.rdc.errors.UnsupportedAlgorithmException;
-import gov.loc.rdc.utils.KeyValueJsonConverter;
-
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class StoreMetadataTaskTest extends TaskTest {
-  
-  @Before
-  public void setup(){
-    clearDatabase();
-    
-    tags = new HashSet<>();
-    tags.add(KEY1);
-    tags.add(KEY2);
-    keyValuePairs = new ArrayList<>();
-    keyValuePairs.add(new KeyValuePair<String, String>(KEY1, VALUE1));
-    keyValuePairs.add(new KeyValuePair<String, String>(KEY2, VALUE2));
-  }
+import gov.loc.rdc.entities.KeyValuePair;
+import gov.loc.rdc.errors.JsonParamParseFailException;
+import gov.loc.rdc.utils.KeyValueJsonConverter;
+
+public class StoreMetadataTaskTest extends AbstractTaskTest {
   
   @Test
   public void testStoreMetadata() throws JsonProcessingException{
+    List<KeyValuePair<String, String>> keyValuePairs = new ArrayList<>();
+    keyValuePairs.add(new KeyValuePair<String, String>("key1", "value1"));
+    keyValuePairs.add(new KeyValuePair<String, String>("key2", "value2"));
+    
     DeferredResult<Boolean> result = new DeferredResult<>();
     String keyValuePairsAsJson = KeyValueJsonConverter.convertToJson(keyValuePairs);
-    StoreMetadataTask sut = new StoreMetadataTask(result, repository, ALGORITHM, HASH, tags, keyValuePairsAsJson);
+    StoreMetadataTask sut = new StoreMetadataTask(result, mockRepository, "hash", new HashSet<>(), keyValuePairsAsJson);
     sut.run();
     assertTrue(result.getResult() == Boolean.TRUE);
-  }
-  
-  @Test
-  public void testAlgorithmNotSupported() throws JsonProcessingException{
-    DeferredResult<Boolean> result = new DeferredResult<>();
-    String keyValuePairsAsJson = KeyValueJsonConverter.convertToJson(keyValuePairs);
-    StoreMetadataTask sut = new StoreMetadataTask(result, repository, BAD_ALGORITHM, HASH, tags, keyValuePairsAsJson);
-    sut.run();
-    assertTrue(result.getResult() instanceof UnsupportedAlgorithmException);
   }
   
   @Test
   public void testInvalidJson() {
     DeferredResult<Boolean> result = new DeferredResult<>();
     String keyValuePairsAsJson = "some invalid json";
-    StoreMetadataTask sut = new StoreMetadataTask(result, repository, ALGORITHM, HASH, tags, keyValuePairsAsJson);
+    StoreMetadataTask sut = new StoreMetadataTask(result, mockRepository, "hash", new HashSet<>(), keyValuePairsAsJson);
     sut.run();
     assertTrue(result.getResult() instanceof JsonParamParseFailException);
   }

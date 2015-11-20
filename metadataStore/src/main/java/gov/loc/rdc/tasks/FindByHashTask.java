@@ -8,16 +8,16 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class FindByHashTask extends AbstractMetadataStoreTask implements Runnable {
   private final DeferredResult<Metadata> result;
   
-  public FindByHashTask(final DeferredResult<Metadata> result, final MetadataRepository repository, final String algorithm, final String hash) {
-    super(repository, algorithm, hash);
+  public FindByHashTask(final DeferredResult<Metadata> result, final MetadataRepository repository, final String hash) {
+    super(repository, hash);
     this.result = result;
   }
 
   @Override
-  protected void doTaskWork() {
+  public void run() {
     Metadata data = repository.findByHash(hash);
     if (data == null) {
-      data = new Metadata();
+      data = new Metadata(hash);
     }
     result.setResult(data);
   }
