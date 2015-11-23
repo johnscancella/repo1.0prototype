@@ -15,7 +15,7 @@ import gov.loc.rdc.host.HostUtils;
 public class FilePutRequestMessageHandler extends AbstractFileRequest implements CommandLineRunner, HashPathUtils, HostUtils {
   
   @Value("${putqueue.name}")
-  protected String queueName;
+  private String queueName;
 
   @Override
   public void run(String... args) throws Exception {
@@ -27,5 +27,10 @@ public class FilePutRequestMessageHandler extends AbstractFileRequest implements
     Consumer consumer = new FilePutRequestConsumer(storeFileChannel, objectStoreRootDir, fileStoreRepo);
     boolean autoAck=false;
     storeFileChannel.basicConsume(queue, autoAck, consumer);
+  }
+
+  //only for unit tests
+  protected void setQueueName(String queueName) {
+    this.queueName = queueName;
   }
 }

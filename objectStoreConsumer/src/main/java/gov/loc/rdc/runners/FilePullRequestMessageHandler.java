@@ -15,7 +15,7 @@ import gov.loc.rdc.host.HostUtils;
 public class FilePullRequestMessageHandler extends AbstractFileRequest implements CommandLineRunner, HashPathUtils, HostUtils {
   
   @Value("${scpqueue.name}")
-  protected String queueName;
+  private String queueName;
 
   @Override
   public void run(String... args) throws Exception {
@@ -27,5 +27,10 @@ public class FilePullRequestMessageHandler extends AbstractFileRequest implement
     Consumer consumer = new FilePullRequestConsumer(storeFileChannel, objectStoreRootDir, fileStoreRepo);
     boolean autoAck=false;
     storeFileChannel.basicConsume(queue, autoAck, consumer);
+  }
+
+  //used for unit test only
+  protected void setQueueName(String queueName) {
+    this.queueName = queueName;
   }
 }

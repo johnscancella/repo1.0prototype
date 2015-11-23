@@ -31,4 +31,9 @@ public abstract class AbstractFileRequest {
     newChannel.queueDeclare(queue, durable, false, false, null);
     return newChannel;
   }
+
+  //for unit test
+  protected void setMqHost(String mqHost) {
+    this.mqHost = mqHost;
+  }
 }
