@@ -34,6 +34,6 @@ subprojects {
   
   task dump(type: Copy){
     from configurations.runtime
-    into "dumpedDependencies"
+    into "${project.buildDir}/dumpedDependencies"
   }
 }
