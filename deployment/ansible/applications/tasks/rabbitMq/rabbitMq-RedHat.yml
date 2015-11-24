@@ -3,3 +3,8 @@
   yum: name=https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.6/rabbitmq-server-3.5.6-1.noarch.rpm
   
 #TODO config?
+#-  name: Install Management plugin
+#   rabbitmq-plugins enable rabbitmq_management
+
+- name: Start RabbitMq and set to start on boot
+  service: name=rabbitmq state=restarted enabled=yes
