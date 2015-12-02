@@ -1,3 +1,11 @@
+plugins {
+  id 'com.gradle.build-receipt' version '1.0'
+}
+buildReceiptLicense { 
+  agreementUrl = 'https://gradle.com/terms-of-service'
+  agree = 'yes'
+}
+
 subprojects {
   repositories {
     jcenter()
@@ -18,6 +26,14 @@ subprojects {
 
   jacocoTestReport.dependsOn test
   build.dependsOn jacocoTestReport
+
+  jacocoTestReport {
+    afterEvaluate {
+      classDirectories = files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: 'gov.loc.rdc.domain')
+      })
+    }
+  }
 
   findbugsMain{
     reports{
